@@ -1,0 +1,221 @@
+"use client";
+
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Target, Eye, TrendingUp, Users } from 'lucide-react';
+import { AnimatedBackground } from '@/components/animated-background';
+import { LeadershipVideosSection } from '@/components/home/leadership-videos-section';
+
+const leadership = [
+  {
+    name: 'Anil Guptha',
+    role: 'Founder & Global President',
+    bio: 'Visionary entrepreneur with 25+ years of experience in building business communities.',
+  },
+  {
+    name: 'Rajesh Kumar',
+    role: 'Vice President',
+    bio: 'Leading manufacturing sector representative with extensive networking expertise.',
+  },
+  {
+    name: 'Priya Sharma',
+    role: 'Secretary General',
+    bio: 'Coordinating global operations and member engagement initiatives.',
+  },
+  {
+    name: 'Venkat Reddy',
+    role: 'Treasurer',
+    bio: 'Managing financial operations and membership investments.',
+  },
+];
+
+const values = [
+  {
+    icon: Users,
+    title: 'Community First',
+    description: 'We believe in the power of collective growth over individual success.',
+  },
+  {
+    icon: Target,
+    title: 'Trust & Integrity',
+    description: 'Building relationships based on transparency and ethical business practices.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Mutual Growth',
+    description: 'Creating opportunities that benefit all members of our community.',
+  },
+  {
+    icon: Eye,
+    title: 'Long-term Vision',
+    description: 'Focusing on sustainable business relationships that last generations.',
+  },
+];
+
+export default function AboutPage() {
+  return (
+    <div className="min-h-screen pt-20">
+      <section className="relative py-20 bg-black overflow-hidden">
+        <AnimatedBackground variant="default" />
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto text-center mb-16"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              About WeVysya
+            </h1>
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              WeVysya is the world's premier Arya Vysya Entrepreneurs Grid,
+              connecting business owners and entrepreneurs globally. We believe in
+              the power of community, collaboration, and shared success.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ scale: 1.03, y: -5 }}
+            >
+              <Card className="h-full hover:shadow-2xl hover:shadow-teal-500/20 transition-all">
+                <CardContent className="p-8">
+                  <motion.div
+                    className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4"
+                    whileHover={{ rotate: 5, scale: 1.1 }}
+                  >
+                    <Target className="h-8 w-8 text-orange-600" />
+                  </motion.div>
+                  <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    To create a global ecosystem where Arya Vysya entrepreneurs
+                    thrive through meaningful connections, knowledge sharing, and
+                    collaborative business growth. We transform "I" thinking into
+                    "WE" thinking.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              whileHover={{ scale: 1.03, y: -5 }}
+            >
+              <Card className="h-full hover:shadow-2xl hover:shadow-teal-500/20 transition-all">
+                <CardContent className="p-8">
+                  <motion.div
+                    className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4"
+                    whileHover={{ rotate: -5, scale: 1.1 }}
+                  >
+                    <Eye className="h-8 w-8 text-orange-600" />
+                  </motion.div>
+                  <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    To become the most trusted and impactful business community for
+                    Arya Vysya entrepreneurs worldwide, facilitating billions in
+                    business value and creating lasting legacies for future
+                    generations.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-20"
+          >
+            <h2 className="text-3xl font-bold text-center mb-12">Our Values</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              {values.map((value, index) => {
+                const Icon = value.icon;
+                return (
+                  <motion.div
+                    key={value.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                  >
+                    <Card className="h-full text-center hover:shadow-xl hover:shadow-teal-500/10 transition-all">
+                      <CardContent className="p-6">
+                        <motion.div
+                          className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4 mx-auto"
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <Icon className="h-6 w-6 text-orange-600" />
+                        </motion.div>
+                        <h3 className="font-semibold mb-2">{value.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {value.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Leadership Team
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              {leadership.map((leader, index) => (
+                <motion.div
+                  key={leader.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -8 }}
+                >
+                  <Card className="h-full text-center hover:shadow-xl hover:shadow-teal-500/10 transition-all">
+                    <CardContent className="p-6">
+                      <motion.div
+                        className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mb-4 mx-auto"
+                        whileHover={{ rotate: 360, scale: 1.1 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <span className="text-white font-bold text-2xl">
+                          {leader.name.charAt(0)}
+                        </span>
+                      </motion.div>
+                      <h3 className="font-semibold text-lg mb-1">
+                        {leader.name}
+                      </h3>
+                      <p className="text-sm text-orange-600 dark:text-orange-400 mb-3">
+                        {leader.role}
+                      </p>
+                      <p className="text-sm text-muted-foreground">{leader.bio}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="bg-black">
+        <LeadershipVideosSection />
+      </section>
+    </div>
+  );
+}
