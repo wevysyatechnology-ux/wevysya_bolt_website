@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase, type BlogPost } from '@/lib/supabase';
-import { BookOpen, Mic, ChefHat, TrendingUp, ArrowRight, Newspaper } from 'lucide-react';
+import { BookOpen, Mic, ChefHat, TrendingUp, ArrowRight, Newspaper, Download } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
 
 const CATEGORIES = ['success_story', 'business_tip', 'recipe', 'podcast', 'blog'] as const;
@@ -88,6 +88,14 @@ export default function BlogPage() {
                   </button>
                 );
               })}
+              <a
+                href="/wevysya-logo.png"
+                download="wevysya-logo.png"
+                className="flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-semibold border border-border text-muted-foreground hover:border-emerald-500/50 hover:text-foreground transition-all duration-200"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Download Logo
+              </a>
             </div>
           </motion.div>
 
