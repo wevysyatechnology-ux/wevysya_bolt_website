@@ -130,6 +130,10 @@ export default function AdminDashboard() {
     let error;
     if (id) {
       ({ error } = await supabase.from(table).update({ ...payload, updated_at: new Date().toISOString() }).eq('id', id));
+    } else if (table === 'global_leaders' && typeof payload.role === 'string') {
+      ({ error } = await supabase
+        .from(table)
+        .upsert({ ...payload, updated_at: new Date().toISOString() }, { onConflict: 'role' }));
     } else {
       ({ error } = await supabase.from(table).insert(payload));
     }
