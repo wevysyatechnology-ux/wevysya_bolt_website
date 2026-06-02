@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/logo';
-import { Users, Video, Star, Clapperboard, LogOut, Plus, Trash2, Save, LayoutDashboard, X, Menu, Upload, Image as ImageIcon, Loader as Loader2, CircleHelp as HelpCircle, GripVertical, Building2, CalendarDays, Newspaper } from 'lucide-react';
+import { Users, Video, Star, Clapperboard, LogOut, Plus, Trash2, Save, LayoutDashboard, X, Menu, Upload, Image as ImageIcon, Loader as Loader2, CircleHelp as HelpCircle, GripVertical, Building2, CalendarDays, Newspaper, FileVideo } from 'lucide-react';
 import { HouseManagement } from '@/components/admin/house-management';
 
 type MembershipFaq = {
@@ -657,7 +657,7 @@ function LeadershipVideosSection({
         >
           <FormField label="Leader Name" value={(editing as LeadershipVideo).name} onChange={v => setEditing({ ...editing, name: v })} />
           <FormField label="Role / Title" value={(editing as LeadershipVideo).role} onChange={v => setEditing({ ...editing, role: v })} />
-          <FormField label="Video URL" value={(editing as LeadershipVideo).video_url} onChange={v => setEditing({ ...editing, video_url: v })} />
+          <VideoUploadField label="Video" value={(editing as LeadershipVideo).video_url} onChange={v => setEditing({ ...editing, video_url: v })} folder="leadership-videos" />
           <FormField label="Duration (seconds)" type="number" value={String((editing as LeadershipVideo).duration ?? 0)} onChange={v => setEditing({ ...editing, duration: parseInt(v) || 0 })} />
           <FormField label="Order" type="number" value={String((editing as LeadershipVideo).order_index ?? 0)} onChange={v => setEditing({ ...editing, order_index: parseInt(v) || 0 })} />
           <ToggleField label="Active" value={(editing as LeadershipVideo).is_active ?? true} onChange={v => setEditing({ ...editing, is_active: v })} />
@@ -717,7 +717,7 @@ function TestimonialVideosSection({
           <FormField label="Member Name" value={(editing as TestimonialVideo).member_name} onChange={v => setEditing({ ...editing, member_name: v })} />
           <FormField label="Business Name" value={(editing as TestimonialVideo).business_name ?? ''} onChange={v => setEditing({ ...editing, business_name: v })} />
           <FormField label="City" value={(editing as TestimonialVideo).city ?? ''} onChange={v => setEditing({ ...editing, city: v })} />
-          <FormField label="Video URL" value={(editing as TestimonialVideo).video_url} onChange={v => setEditing({ ...editing, video_url: v })} />
+          <VideoUploadField label="Video" value={(editing as TestimonialVideo).video_url} onChange={v => setEditing({ ...editing, video_url: v })} folder="testimonial-videos" />
           <FormField label="Duration (seconds)" type="number" value={String((editing as TestimonialVideo).duration ?? 0)} onChange={v => setEditing({ ...editing, duration: parseInt(v) || 0 })} />
           <FormField label="Order" type="number" value={String((editing as TestimonialVideo).order_index ?? 0)} onChange={v => setEditing({ ...editing, order_index: parseInt(v) || 0 })} />
           <ToggleField label="Active" value={(editing as TestimonialVideo).is_active ?? true} onChange={v => setEditing({ ...editing, is_active: v })} />
@@ -775,7 +775,7 @@ function EventVideosSection({
           onSubmit={() => { onSave(editing); setEditing(null); }}
         >
           <FormField label="Title" value={(editing as EventVideo).title} onChange={v => setEditing({ ...editing, title: v })} />
-          <FormField label="Video URL" value={(editing as EventVideo).video_url} onChange={v => setEditing({ ...editing, video_url: v })} />
+          <VideoUploadField label="Video" value={(editing as EventVideo).video_url} onChange={v => setEditing({ ...editing, video_url: v })} folder="event-videos" />
           <FormField label="Duration (seconds)" type="number" value={String((editing as EventVideo).duration ?? 0)} onChange={v => setEditing({ ...editing, duration: parseInt(v) || 0 })} />
           <FormField label="Order" type="number" value={String((editing as EventVideo).order_index ?? 0)} onChange={v => setEditing({ ...editing, order_index: parseInt(v) || 0 })} />
           <ToggleField label="Active" value={(editing as EventVideo).is_active ?? true} onChange={v => setEditing({ ...editing, is_active: v })} />
@@ -1392,6 +1392,88 @@ function ImageUploadField({
             className="h-8 text-xs"
           />
           {error && <p className="text-xs text-destructive">{error}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VideoUploadField({
+  label,
+  value,
+  onChange,
+  folder = 'videos',
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  folder?: string;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleFile(file: File) {
+    setUploading(true);
+    setError('');
+    const ext = file.name.split('.').pop();
+    const filename = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from('media').upload(filename, file, { upsert: false });
+    if (uploadError) {
+      setError('Upload failed: ' + uploadError.message);
+      setUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from('media').getPublicUrl(filename);
+    onChange(data.publicUrl);
+    setUploading(false);
+  }
+
+  const fileName = value ? value.split('/').pop()?.split('?')[0] : '';
+
+  return (
+    <div className="space-y-1.5 sm:col-span-2">
+      <Label className="text-xs font-medium text-muted-foreground">{label}</Label>
+      <div className="flex gap-3 items-start">
+        {/* Preview */}
+        <div className="w-20 h-20 rounded-lg border border-border bg-muted flex items-center justify-center overflow-hidden shrink-0">
+          {value ? (
+            <video src={value} className="w-full h-full object-cover" muted />
+          ) : (
+            <FileVideo className="w-6 h-6 text-muted-foreground" />
+          )}
+        </div>
+        <div className="flex-1 space-y-2">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-border hover:border-emerald-500/50 bg-muted/50 hover:bg-emerald-500/5 text-sm text-muted-foreground hover:text-foreground transition-all disabled:opacity-50 w-full justify-center"
+          >
+            {uploading ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+            ) : (
+              <><Upload className="w-4 h-4" /> Click to upload video</>  
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime,video/x-msvideo"
+            className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
+          />
+          <Input
+            type="text"
+            placeholder="Or paste video URL..."
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="h-8 text-xs"
+          />
+          {error && <p className="text-xs text-destructive">{error}</p>}
+          {value && !uploading && fileName && (
+            <p className="text-xs text-emerald-400 truncate" title={fileName}>{fileName}</p>
+          )}
         </div>
       </div>
     </div>
