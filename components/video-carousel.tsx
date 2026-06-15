@@ -4,6 +4,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, ChevronLeft, ChevronRight, X, Maximize2, Minimize2 } from 'lucide-react';
 
+const CONTROLS_HIDE_DELAY = 3000;
+
 interface VideoItem {
   id: string;
   video_url: string;
@@ -42,8 +44,35 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showControls, setShowControls] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hideControlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetHideTimer = useCallback(() => {
+    if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
+    setShowControls(true);
+    hideControlsTimerRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, CONTROLS_HIDE_DELAY);
+  }, []);
+
+  // When playing starts, start hide timer; when paused, always show
+  useEffect(() => {
+    if (isPlaying) {
+      resetHideTimer();
+    } else {
+      if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
+      setShowControls(true);
+    }
+  }, [isPlaying, resetHideTimer]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
+    };
+  }, []);
 
   // Reset player state on video change
   useEffect(() => {
@@ -205,10 +234,13 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
   };
 
   return (
-    <div className="relative w-full max-w-sm mx-auto">
+    <div className="relative w-full max-w-sm mx-auto px-10">
       <div
         ref={containerRef}
         className="relative aspect-[9/16] bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-800"
+        onMouseMove={() => { if (isPlaying) resetHideTimer(); }}
+        onTouchStart={() => { if (isPlaying) resetHideTimer(); }}
+        onClick={() => { if (isPlaying && !showControls) resetHideTimer(); }}
       >
         <AnimatePresence mode="wait">
           <motion.div
@@ -253,7 +285,7 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
         </AnimatePresence>
 
         {/* ── Overlay: hidden while YouTube iframe is active ── */}
-        {!(ytId && isPlaying) && (
+        {!(ytId && isPlaying) && showControls && (
           <>
             {/* Gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 z-10 pointer-events-none" />
@@ -300,7 +332,7 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
 
         {/* ── Play / Pause button ── */}
         {/* pointer-events-none on the full-cover div so underlying controls remain clickable */}
-        {!(ytId && isPlaying) && (
+        {!(ytId && isPlaying) && showControls && (
           <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -332,7 +364,7 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
         )}
 
         {/* Mute button (direct video only) */}
-        {isDirectVideo && (
+        {isDirectVideo && showControls && (
           <div className="absolute top-6 right-6 z-30">
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -349,33 +381,7 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
           </div>
         )}
 
-        {videos.length > 1 && (
-          <>
-            <div className="absolute top-1/2 -translate-y-1/2 left-4 z-30">
-              <motion.button
-                whileHover={{ scale: 1.1, x: -5 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handlePrev}
-                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </motion.button>
-            </div>
-
-            <div className="absolute top-1/2 -translate-y-1/2 right-4 z-30">
-              <motion.button
-                whileHover={{ scale: 1.1, x: 5 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handleNext}
-                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors"
-              >
-                <ChevronRight className="w-6 h-6 text-white" />
-              </motion.button>
-            </div>
-          </>
-        )}
-
-        {videos.length > 1 && (
+        {videos.length > 1 && showControls && (
           <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-30">
             {videos.map((_, index) => (
               <button
@@ -394,6 +400,31 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
           </div>
         )}
       </div>
+
+      {/* Navigation arrows outside the video, always visible when multiple videos */}
+      {videos.length > 1 && (
+        <>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handlePrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 dark:bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 dark:hover:bg-white/20 transition-colors z-40 shadow-lg"
+            aria-label="Previous video"
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 dark:bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 dark:hover:bg-white/20 transition-colors z-40 shadow-lg"
+            aria-label="Next video"
+          >
+            <ChevronRight className="w-5 h-5 text-white" />
+          </motion.button>
+        </>
+      )}
     </div>
   );
 }

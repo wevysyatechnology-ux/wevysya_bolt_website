@@ -25,8 +25,7 @@ export function HeroSection() {
       className="hero-v3-section"
       style={{
         position: 'relative',
-        minHeight: '100vh',
-        overflowX: 'hidden',
+        overflow: 'hidden',
         background: '#14231F',
         display: 'flex',
         alignItems: 'center',
@@ -140,7 +139,7 @@ export function HeroSection() {
             className="hero-v3-subheadline"
             style={{
               fontSize: '18px', lineHeight: 1.6, color: 'rgba(255,255,255,0.65)',
-              maxWidth: '560px', marginBottom: '40px', fontWeight: 400,
+              maxWidth: '560px', marginBottom: '28px', fontWeight: 400,
               animation: 'hero-rise 0.9s cubic-bezier(0.22,1,0.36,1) 0.18s both',
             }}
           >
@@ -154,7 +153,7 @@ export function HeroSection() {
           <div
             className="hero-v3-cta-row"
             style={{
-              display: 'flex', gap: '14px', marginBottom: '48px', flexWrap: 'wrap',
+              display: 'flex', gap: '14px', marginBottom: '28px', flexWrap: 'wrap',
               animation: 'hero-rise 0.9s cubic-bezier(0.22,1,0.36,1) 0.26s both',
             }}
           >
@@ -332,17 +331,6 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div style={{
-        position:'absolute', bottom:'30px', left:'50%', transform:'translateX(-50%)',
-        zIndex:5, display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
-        color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'0.15em',
-        textTransform:'uppercase', fontWeight:500,
-        animation:'hero-rise 1s ease 1s both',
-      }} className="hidden md:flex">
-        <span>Scroll</span>
-        <div style={{ width:'1px', height:'36px', background:'linear-gradient(to bottom, #34D399, transparent)', animation:'hero-scroll-pulse 2.5s ease-in-out infinite' }} />
-      </div>
     </section>
   );
 }
