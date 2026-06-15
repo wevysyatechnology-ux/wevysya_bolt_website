@@ -234,7 +234,7 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
   };
 
   return (
-    <div className="relative w-full max-w-sm mx-auto px-10">
+    <div className={`relative w-full max-w-sm mx-auto ${videos.length > 1 ? 'px-10' : ''}`}>
       <div
         ref={containerRef}
         className="relative aspect-[9/16] bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-800"
