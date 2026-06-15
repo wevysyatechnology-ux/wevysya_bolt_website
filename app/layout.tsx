@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { ConditionalChrome, ConditionalFooter } from '@/components/conditional-chrome';
 import { Toaster } from '@/components/ui/toaster';
+import { VideoPlayProvider } from '@/components/video-play-context';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -47,9 +48,11 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <ConditionalChrome />
-          <main className="min-h-screen">{children}</main>
-          <ConditionalFooter />
+          <VideoPlayProvider>
+            <ConditionalChrome />
+            <main className="min-h-screen">{children}</main>
+            <ConditionalFooter />
+          </VideoPlayProvider>
           <Toaster />
         </ThemeProvider>
       </body>

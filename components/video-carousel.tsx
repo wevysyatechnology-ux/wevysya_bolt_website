@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, ChevronLeft, ChevronRight, X, Maximize2, Minimize2 } from 'lucide-react';
+import { useVideoPlay } from './video-play-context';
 
 const CONTROLS_HIDE_DELAY = 3000;
 
@@ -23,8 +24,6 @@ interface VideoCarouselProps {
   videos: VideoItem[];
   type?: 'leadership' | 'testimonial' | 'event';
   instanceId?: string;
-  playingInstanceId?: string | null;
-  onPlay?: (id: string) => void;
 }
 
 function getYouTubeId(url: string): string | null {
@@ -40,7 +39,8 @@ function formatTime(sec: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function VideoCarousel({ videos, type = 'testimonial', instanceId, playingInstanceId, onPlay }: VideoCarouselProps) {
+export function VideoCarousel({ videos, type = 'testimonial', instanceId }: VideoCarouselProps) {
+  const { playingId, setPlayingId } = useVideoPlay();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -70,12 +70,12 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId, playin
     }
   }, [isPlaying, resetHideTimer]);
 
-  // Pause this instance when another instance starts playing
+  // Pause this instance when another instance starts playing globally
   useEffect(() => {
-    if (instanceId && playingInstanceId && playingInstanceId !== instanceId && isPlaying) {
+    if (instanceId && playingId && playingId !== instanceId && isPlaying) {
       setIsPlaying(false);
     }
-  }, [playingInstanceId, instanceId]);
+  }, [playingId, instanceId]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -123,7 +123,7 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId, playin
   const togglePlay = () => {
     const next = !isPlaying;
     setIsPlaying(next);
-    if (next && instanceId) onPlay?.(instanceId);
+    if (next && instanceId) setPlayingId(instanceId);
   };
 
   const toggleMute = () => setIsMuted((prev) => !prev);
