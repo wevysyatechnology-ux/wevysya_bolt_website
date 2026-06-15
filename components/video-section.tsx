@@ -17,6 +17,7 @@ const DESKTOP_PER_PAGE = 4;
 
 export function VideoSection({ title, subtitle, videos, type }: VideoSectionProps) {
   const [desktopStart, setDesktopStart] = useState(0);
+  const [playingInstanceId, setPlayingInstanceId] = useState<string | null>(null);
 
   const canPrev = desktopStart > 0;
   const canNext = desktopStart + DESKTOP_PER_PAGE < videos.length;
@@ -54,7 +55,13 @@ export function VideoSection({ title, subtitle, videos, type }: VideoSectionProp
                   transition={{ duration: 0.35 }}
                 >
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  <VideoCarousel videos={[video] as any} type={type} />
+                  <VideoCarousel
+                    videos={[video] as any}
+                    type={type}
+                    instanceId={'id' in video ? video.id : String(desktopStart)}
+                    playingInstanceId={playingInstanceId}
+                    onPlay={setPlayingInstanceId}
+                  />
                 </motion.div>
               ))}
             </div>

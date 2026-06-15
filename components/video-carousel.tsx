@@ -22,6 +22,9 @@ interface VideoItem {
 interface VideoCarouselProps {
   videos: VideoItem[];
   type?: 'leadership' | 'testimonial' | 'event';
+  instanceId?: string;
+  playingInstanceId?: string | null;
+  onPlay?: (id: string) => void;
 }
 
 function getYouTubeId(url: string): string | null {
@@ -37,7 +40,7 @@ function formatTime(sec: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselProps) {
+export function VideoCarousel({ videos, type = 'testimonial', instanceId, playingInstanceId, onPlay }: VideoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -66,6 +69,13 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
       setShowControls(true);
     }
   }, [isPlaying, resetHideTimer]);
+
+  // Pause this instance when another instance starts playing
+  useEffect(() => {
+    if (instanceId && playingInstanceId && playingInstanceId !== instanceId && isPlaying) {
+      setIsPlaying(false);
+    }
+  }, [playingInstanceId, instanceId]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -110,7 +120,11 @@ export function VideoCarousel({ videos, type = 'testimonial' }: VideoCarouselPro
 
   const handleNext = () => setCurrentIndex((prev) => (prev + 1) % videos.length);
   const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
-  const togglePlay = () => setIsPlaying(!isPlaying);
+  const togglePlay = () => {
+    const next = !isPlaying;
+    setIsPlaying(next);
+    if (next && instanceId) onPlay?.(instanceId);
+  };
 
   const toggleMute = () => setIsMuted((prev) => !prev);
 
