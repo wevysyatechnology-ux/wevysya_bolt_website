@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, ChevronLeft, ChevronRight, X, Maximize2, Minimize2 } from 'lucide-react';
 import { useVideoPlay } from './video-play-context';
 
-const CONTROLS_HIDE_DELAY = 3000;
+const CONTROLS_HIDE_DELAY = 300;
 
 interface VideoItem {
   id: string;
