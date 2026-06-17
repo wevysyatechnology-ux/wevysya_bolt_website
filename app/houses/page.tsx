@@ -42,9 +42,12 @@ function FilterSelect({
   onChange: (id: string) => void;
   disabled?: boolean;
 }) {
+  const selectId = `filter-${label.toLowerCase().replace(/\s+/g, '-')}`;
   return (
     <div className="relative">
+      <label htmlFor={selectId} className="sr-only">{label}</label>
       <select
+        id={selectId}
         value={value}
         onChange={e => onChange(e.target.value)}
         disabled={disabled}
@@ -117,7 +120,7 @@ function HouseCard({ house, index }: { house: HouseWithMembers; index: number })
         {house.members.length === 0 ? (
           <p className="text-center text-muted-foreground text-sm py-6">No members assigned yet</p>
         ) : (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {roles.map(role => {
               const member = getMember(role);
               if (!member) {
@@ -265,7 +268,7 @@ export default function HousesPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-14"
+            className="grid grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto mb-14"
           >
             {statsCards.map((card, i) => {
               const CardIcon = card.icon;

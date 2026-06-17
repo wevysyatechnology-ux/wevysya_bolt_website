@@ -32,6 +32,8 @@ export function TestimonialsSection() {
     fetchTestimonials();
   }, []);
 
+  if (testimonials.length === 0) return null;
+
   return (
     <section className="py-32 bg-black relative overflow-hidden border-y border-emerald-500/10">
       <div className="absolute inset-0 opacity-10">

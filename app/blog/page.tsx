@@ -35,8 +35,9 @@ export default function BlogPage() {
 
     if (selected) query = query.eq('category', selected);
 
-    query.then(({ data }) => {
-      setPosts(data ?? []);
+    query.then(({ data, error }) => {
+      if (!error) setPosts(data ?? []);
+      else setPosts([]);
       setLoading(false);
     });
   }, [selected]);

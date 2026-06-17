@@ -59,6 +59,7 @@ function EventModal({ event, onClose }: { event: UpcomingEvent; onClose: () => v
           {/* Close button */}
           <button
             onClick={onClose}
+            aria-label="Close event details"
             className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white hover:bg-black/80 transition-colors"
           >
             <X className="w-4 h-4" />
@@ -116,8 +117,8 @@ export default function EventsPage() {
       .gte('event_date', new Date().toISOString().slice(0, 10))
       .order('order_index', { ascending: true })
       .order('event_date', { ascending: true })
-      .then(({ data }) => {
-        if (data) setEvents(data);
+      .then(({ data, error }) => {
+        if (!error && data) setEvents(data);
         setLoading(false);
       });
   }, []);

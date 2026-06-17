@@ -41,7 +41,7 @@ export default function MembershipPage() {
       .select('id, question, answer, order_index')
       .eq('is_active', true)
       .order('order_index')
-      .then(({ data }) => { if (data) setFaqs(data); });
+      .then(({ data, error }) => { if (!error && data) setFaqs(data); });
   }, []);
 
   return (
@@ -167,6 +167,8 @@ export default function MembershipPage() {
                     <button
                       className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-muted/50 transition-colors"
                       onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                      aria-expanded={openFaq === faq.id}
+                      aria-controls={`faq-answer-${faq.id}`}
                     >
                       <span className="font-semibold text-foreground pr-4">{faq.question}</span>
                       <motion.div
@@ -180,6 +182,7 @@ export default function MembershipPage() {
                     <AnimatePresence initial={false}>
                       {openFaq === faq.id && (
                         <motion.div
+                          id={`faq-answer-${faq.id}`}
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}

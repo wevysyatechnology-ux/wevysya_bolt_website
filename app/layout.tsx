@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
     images: [
       {
-        url: 'https://bolt.new/static/og_default.png',
+        url: '/wevysya-logo.png',
       },
     ],
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
     images: [
       {
-        url: 'https://bolt.new/static/og_default.png',
+        url: '/wevysya-logo.png',
       },
     ],
   },

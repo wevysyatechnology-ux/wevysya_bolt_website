@@ -18,7 +18,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { Mail, Phone, MapPin, Loader as Loader2 } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
 
 const formSchema = z.object({
@@ -47,14 +48,24 @@ export default function ContactPage() {
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.from('contact_messages').insert([values]);
+      if (error) throw error;
+
       toast({
         title: 'Message Sent!',
-        description: 'Thank you for contacting us. We will get back to you soon.',
+        description: 'Thank you for contacting us. We will get back to you within 24 hours.',
       });
       form.reset();
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to send your message. Please try again or email us directly.',
+        variant: 'destructive',
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   }
 
   return (
