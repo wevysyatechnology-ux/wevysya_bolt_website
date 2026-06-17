@@ -47,7 +47,7 @@ export function Navigation() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          <Link href="/">
+          <Link href="/" aria-label="WeVysya home">
             <Logo />
           </Link>
 

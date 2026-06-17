@@ -335,8 +335,17 @@ export default function HousesPage() {
                 className="text-center py-24 text-muted-foreground"
               >
                 <Home className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                <p className="text-lg font-medium">No houses found</p>
-                <p className="text-sm mt-1">Try selecting a different filter</p>
+                {!selCountry ? (
+                  <>
+                    <p className="text-lg font-medium">Select a country to explore houses</p>
+                    <p className="text-sm mt-1">Use the filters above to browse WeVysya houses by region</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg font-medium">No houses found</p>
+                    <p className="text-sm mt-1">Try selecting a different filter</p>
+                  </>
+                )}
               </motion.div>
             ) : (
               <AnimatePresence mode="wait">

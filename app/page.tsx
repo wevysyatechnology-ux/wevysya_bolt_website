@@ -1,6 +1,5 @@
 import { HeroSection } from '@/components/home/hero-section';
 import { WhySection } from '@/components/home/why-section';
-import { TestimonialsSection } from '@/components/home/testimonials-section';
 import { CtaSection } from '@/components/home/cta-section';
 import { LeadershipVideosSection } from '@/components/home/leadership-videos-section';
 import { TestimonialVideosSection } from '@/components/home/testimonial-videos-section';

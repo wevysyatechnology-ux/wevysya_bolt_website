@@ -8,11 +8,7 @@ export function ConditionalChrome() {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
   if (isAdmin) return null;
-  return (
-    <>
-      <Navigation />
-    </>
-  );
+  return <Navigation />;
 }
 
 export function ConditionalFooter() {

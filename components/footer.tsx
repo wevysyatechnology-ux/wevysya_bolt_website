@@ -23,6 +23,7 @@ export function Footer() {
                 href="https://instagram.com/wevysya"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="WeVysya on Instagram"
                 className="w-10 h-10 rounded-full bg-teal-500/20 hover:bg-teal-500/30 flex items-center justify-center transition-all"
                 whileHover={{ scale: 1.15, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
@@ -33,6 +34,7 @@ export function Footer() {
                 href="https://facebook.com/wevysya"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="WeVysya on Facebook"
                 className="w-10 h-10 rounded-full bg-teal-500/20 hover:bg-teal-500/30 flex items-center justify-center transition-all"
                 whileHover={{ scale: 1.15, rotate: -5 }}
                 whileTap={{ scale: 0.95 }}

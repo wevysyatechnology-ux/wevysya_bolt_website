@@ -44,7 +44,7 @@ export function VideoSection({ title, subtitle, videos, type }: VideoSectionProp
 
         {/* ── Desktop: 4 cards + section-level arrows ── */}
         <div className="hidden md:block">
-          <div className="relative">
+          <div className="relative px-14">
             <div className="grid grid-cols-4 gap-4">
               {visibleVideos.map((video) => (
                 <motion.div
@@ -67,7 +67,7 @@ export function VideoSection({ title, subtitle, videos, type }: VideoSectionProp
             {canPrev && (
               <button
                 onClick={handlePrev}
-                className="absolute -left-14 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors shadow-lg"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors shadow-lg"
                 aria-label="Previous videos"
               >
                 <ChevronLeft className="w-6 h-6 text-white" />
@@ -78,7 +78,7 @@ export function VideoSection({ title, subtitle, videos, type }: VideoSectionProp
             {canNext && (
               <button
                 onClick={handleNext}
-                className="absolute -right-14 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors shadow-lg"
+                className="absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors shadow-lg"
                 aria-label="Next videos"
               >
                 <ChevronRight className="w-6 h-6 text-white" />

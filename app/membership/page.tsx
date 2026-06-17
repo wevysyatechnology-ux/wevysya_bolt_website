@@ -189,7 +189,7 @@ export default function MembershipPage() {
                           transition={{ duration: 0.25, ease: 'easeInOut' }}
                           className="overflow-hidden"
                         >
-                          <div className="px-6 pb-5 pt-1 text-muted-foreground leading-relaxed border-t border-border">
+                          <div id={`faq-answer-${faq.id}`} className="px-6 pb-5 pt-1 text-muted-foreground leading-relaxed border-t border-border">
                             {faq.answer}
                           </div>
                         </motion.div>

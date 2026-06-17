@@ -70,9 +70,12 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
     }
   }, [isPlaying, resetHideTimer]);
 
-  // Pause this instance when another instance starts playing globally
+  // Pause this instance when another instance starts playing globally.
+  // isPlaying intentionally omitted from deps to avoid a feedback loop:
+  // we only want to react when playingId changes, not on every play/pause toggle.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (instanceId && playingId && playingId !== instanceId && isPlaying) {
+    if (instanceId && playingId && playingId !== instanceId) {
       setIsPlaying(false);
     }
   }, [playingId, instanceId]);
@@ -404,6 +407,8 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
                   setCurrentIndex(index);
                   setIsPlaying(false);
                 }}
+                aria-label={`Video ${index + 1} of ${videos.length}`}
+                aria-current={index === currentIndex ? 'true' : undefined}
                 className={`h-1.5 rounded-full transition-all ${
                   index === currentIndex
                     ? 'w-8 bg-emerald-400'

@@ -84,10 +84,10 @@ export default function AboutPage() {
               <Card className="h-full hover:shadow-2xl hover:shadow-teal-500/20 transition-all">
                 <CardContent className="p-8">
                   <motion.div
-                    className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4"
+                    className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4"
                     whileHover={{ rotate: 5, scale: 1.1 }}
                   >
-                    <Target className="h-8 w-8 text-orange-600" />
+                    <Target className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
                   </motion.div>
                   <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
                   <p className="text-muted-foreground leading-relaxed">
@@ -109,10 +109,10 @@ export default function AboutPage() {
               <Card className="h-full hover:shadow-2xl hover:shadow-teal-500/20 transition-all">
                 <CardContent className="p-8">
                   <motion.div
-                    className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4"
+                    className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4"
                     whileHover={{ rotate: -5, scale: 1.1 }}
                   >
-                    <Eye className="h-8 w-8 text-orange-600" />
+                    <Eye className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
                   </motion.div>
                   <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
                   <p className="text-muted-foreground leading-relaxed">
@@ -149,11 +149,11 @@ export default function AboutPage() {
                     <Card className="h-full text-center hover:shadow-xl hover:shadow-teal-500/10 transition-all">
                       <CardContent className="p-6">
                         <motion.div
-                          className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4 mx-auto"
+                          className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4 mx-auto"
                           whileHover={{ rotate: 360 }}
                           transition={{ duration: 0.5 }}
                         >
-                          <Icon className="h-6 w-6 text-orange-600" />
+                          <Icon className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                         </motion.div>
                         <h3 className="font-semibold mb-2">{value.title}</h3>
                         <p className="text-sm text-muted-foreground">
@@ -189,7 +189,7 @@ export default function AboutPage() {
                   <Card className="h-full text-center hover:shadow-xl hover:shadow-teal-500/10 transition-all">
                     <CardContent className="p-6">
                       <motion.div
-                        className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mb-4 mx-auto"
+                        className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-4 mx-auto"
                         whileHover={{ rotate: 360, scale: 1.1 }}
                         transition={{ duration: 0.5 }}
                       >
@@ -200,7 +200,7 @@ export default function AboutPage() {
                       <h3 className="font-semibold text-lg mb-1">
                         {leader.name}
                       </h3>
-                      <p className="text-sm text-orange-600 dark:text-orange-400 mb-3">
+                      <p className="text-sm text-emerald-600 dark:text-emerald-400 mb-3">
                         {leader.role}
                       </p>
                       <p className="text-sm text-muted-foreground">{leader.bio}</p>

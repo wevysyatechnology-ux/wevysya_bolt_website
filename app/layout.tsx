@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/wevysya-logo.png',
+        width: 512,
+        height: 512,
+        alt: 'WeVysya Logo',
       },
     ],
   },
@@ -26,11 +29,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'WeVysya - Arya Vysya Entrepreneurs Grid',
     description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
-    images: [
-      {
-        url: '/wevysya-logo.png',
-      },
-    ],
+    images: ['/wevysya-logo.png'],
   },
 };
 

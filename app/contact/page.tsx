@@ -20,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Loader2 } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
+import { supabase } from '@/lib/supabase';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -47,29 +48,30 @@ export default function ContactPage() {
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
 
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+    const { error } = await supabase.from('contact_messages').insert([
+      {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        message: values.message,
+      },
+    ]);
+
+    if (error) {
+      toast({
+        title: 'Something went wrong',
+        description: 'Could not send your message. Please try again or email us directly at info@wevysya.org.',
+        variant: 'destructive',
       });
-
-      if (!res.ok) throw new Error('Failed');
-
+    } else {
       toast({
         title: 'Message Sent!',
         description: 'Thank you for contacting us. We will get back to you within 24 hours.',
       });
       form.reset();
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to send your message. Please try again or email us directly at info@wevysya.org.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
     }
+
+    setIsSubmitting(false);
   }
 
   return (
@@ -104,8 +106,8 @@ export default function ContactPage() {
                 <Card className="hover-lift hover:shadow-xl hover:shadow-teal-500/10 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Mail className="h-6 w-6 text-orange-600" />
+                      <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Mail className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-2">Email Us</h3>
@@ -128,8 +130,8 @@ export default function ContactPage() {
                 <Card className="hover-lift hover:shadow-xl hover:shadow-teal-500/10 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Phone className="h-6 w-6 text-orange-600" />
+                      <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Phone className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-2">Call Us</h3>
@@ -152,8 +154,8 @@ export default function ContactPage() {
                 <Card className="hover-lift hover:shadow-xl hover:shadow-teal-500/10 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MapPin className="h-6 w-6 text-orange-600" />
+                      <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-2">Visit Us</h3>

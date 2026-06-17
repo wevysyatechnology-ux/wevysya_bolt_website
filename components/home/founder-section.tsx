@@ -29,8 +29,9 @@ export function FounderSection() {
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-transparent z-10" />
                 <Image
                   src="/1001687258.jpg.jpeg"
-                  alt="Anil Guptha - Founder"
+                  alt="Anil Guptha - Founder of WeVysya"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
                 />
               </div>

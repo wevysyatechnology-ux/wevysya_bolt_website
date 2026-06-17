@@ -34,7 +34,7 @@ export function Logo({ className = '', showText = true, size = 'md' }: LogoProps
       </motion.div>
       {showText && (
         <motion.div
-          className={`font-bold ${sizes[size].text} text-white`}
+          className={`font-bold ${sizes[size].text} text-foreground`}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
         >
