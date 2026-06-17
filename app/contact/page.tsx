@@ -18,8 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
-import { Mail, Phone, MapPin, Loader as Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Loader2 } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
 
 const formSchema = z.object({
@@ -49,8 +48,13 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from('contact_messages').insert([values]);
-      if (error) throw error;
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) throw new Error('Failed');
 
       toast({
         title: 'Message Sent!',
@@ -60,7 +64,7 @@ export default function ContactPage() {
     } catch {
       toast({
         title: 'Error',
-        description: 'Failed to send your message. Please try again or email us directly.',
+        description: 'Failed to send your message. Please try again or email us directly at info@wevysya.org.',
         variant: 'destructive',
       });
     } finally {
