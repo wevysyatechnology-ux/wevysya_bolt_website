@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, ChevronLeft, ChevronRight, X, Maximize2, Minimize2 } from 'lucide-react';
 import { useVideoPlay } from './video-play-context';
 
-const CONTROLS_HIDE_DELAY = 300;
+const CONTROLS_HIDE_DELAY = 500;
 
 interface VideoItem {
   id: string;
@@ -43,7 +43,7 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
   const { playingId, setPlayingId } = useVideoPlay();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -119,7 +119,7 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
   // so we sync it manually whenever isMuted changes.
   useEffect(() => {
     if (videoRef.current) videoRef.current.muted = isMuted;
-  }, [isMuted]);
+  }, [isMuted, currentIndex]);
 
   const handleNext = () => setCurrentIndex((prev) => (prev + 1) % videos.length);
   const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
@@ -290,7 +290,6 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
                 src={currentVideo.video_url}
                 poster={currentVideo.thumbnail_url}
                 className="w-full h-full object-cover"
-                muted
                 playsInline
                 preload="metadata"
                 onTimeUpdate={handleTimeUpdate}
