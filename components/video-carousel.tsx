@@ -300,16 +300,16 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
           </motion.div>
         </AnimatePresence>
 
-        {/* ── Overlay: hidden while YouTube iframe is active ── */}
-        {!(ytId && isPlaying) && showControls && (
+        {/* ── Gradient + bottom info: always visible (not YouTube iframe) ── */}
+        {!(ytId && isPlaying) && (
           <>
             {/* Gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 z-10 pointer-events-none" />
 
             {/* Bottom info + controls */}
             <div className="absolute bottom-0 left-0 right-0 z-30 px-5 pb-5">
-              {/* Progress bar (direct video only) */}
-              {hasProgress && (
+              {/* Progress bar (direct video only, shown when controls visible) */}
+              {hasProgress && showControls && (
                 <div className="mb-3">
                   <div
                     className="w-full h-1 bg-white/30 rounded-full cursor-pointer mb-1.5 hover:h-1.5 transition-all group"
@@ -340,7 +340,7 @@ export function VideoCarousel({ videos, type = 'testimonial', instanceId }: Vide
                   </div>
                 </div>
               )}
-              {/* Info text */}
+              {/* Info text — always visible */}
               {getInfoContent()}
             </div>
           </>
