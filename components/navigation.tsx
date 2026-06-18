@@ -31,6 +31,7 @@ export function Navigation() {
     { href: '/membership', label: 'Membership' },
     { href: '/events', label: 'Events' },
     { href: '/blog', label: 'Resources' },
+    { href: '/faq', label: 'FAQ' },
     { href: '/contact', label: 'Contact' },
   ];
 
