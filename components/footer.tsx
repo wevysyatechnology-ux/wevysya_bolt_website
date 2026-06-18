@@ -71,6 +71,12 @@ export function Footer() {
                   Resources
                 </Link>
               </li>
+              <li>
+                <Link href="/faq" className="text-gray-400 hover:text-teal-400 transition-colors flex items-center group">
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-teal-400 transition-all mr-0 group-hover:mr-2"></span>
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
