@@ -1,19 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Check, X, ChevronDown } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
-import { supabase } from '@/lib/supabase';
-
-type Faq = {
-  id: string;
-  question: string;
-  answer: string;
-  order_index: number;
-};
 
 const regularFeatures = [
   { text: 'Access to bi-weekly networking meetings', included: true },
@@ -29,18 +21,66 @@ const regularFeatures = [
   { text: 'No renewal required', included: false },
 ];
 
-export default function MembershipPage() {
-  const [faqs, setFaqs] = useState<Faq[]>([]);
-  const [openFaq, setOpenFaq] = useState<string | null>(null);
+const faqs = [
+  {
+    id: '1',
+    question: 'What is WeVysya?',
+    answer: 'WeVysya is a professional network of Arya Vysya business owners dedicated to helping community members succeed in their establishments. The platform allows entrepreneurs to showcase their products and services to a larger group and expand their market reach into different geographic locations.',
+  },
+  {
+    id: '2',
+    question: 'Why should I join?',
+    answer: 'Joining helps strengthen your business end-to-end by providing access to valuable business links, expert advice, shared resources, events, training and development sessions, advocacy, grants, funding, and corporate assessments.',
+  },
+  {
+    id: '3',
+    question: 'What happens after joining?',
+    answer: 'WeVysya hosts regular networking meetings designed to help members closely interact, build strong presentation skills, and form stable business relationships.',
+  },
+  {
+    id: '4',
+    question: 'Will I surely get business?',
+    answer: 'Business generation depends entirely on your active participation and the nature of the products or services you offer. WeVysya does not guarantee business results.',
+  },
+  {
+    id: '5',
+    question: 'Should I attend meetings regularly? If I miss, will I lose my membership?',
+    answer: 'Yes, consistent attendance is vital because the organization thrives on growing together. If your attendance drops below policy limits, WeVysya reserves the right to allow a new applicant from your same business category to join.',
+  },
+  {
+    id: '6',
+    question: "If I can't attend a meeting, can someone else go on my behalf?",
+    answer: "Yes. Under the organization's substitution policy, you are permitted to send a replacement if you are unable to attend due to an important conflict.",
+  },
+  {
+    id: '7',
+    question: 'How long is the membership valid?',
+    answer: 'Membership is valid for exactly 1 year from your official date of registration.',
+  },
+  {
+    id: '8',
+    question: 'What is the eligibility criteria?',
+    answer: 'Any Arya Vysya entrepreneur who independently runs their own business and holds a clean background (no criminal records) is eligible to apply. However, all memberships are strictly subject to final administrative approval.',
+  },
+  {
+    id: '9',
+    question: 'Do we have regular meetings?',
+    answer: 'Yes. Every regional group (referred to as a "house") coordinates structured meetings once every 15 days.',
+  },
+  {
+    id: '10',
+    question: 'Will I get financial support from WeVysya?',
+    answer: 'While WeVysya does not fund businesses directly, one of its primary objectives is connecting entrepreneurs with external funding avenues like Angel investors, Venture Capital (VC) funds, and institutional banks.',
+  },
+  {
+    id: '11',
+    question: 'Are there any hidden charges?',
+    answer: 'No. Aside from the standard registration and upfront annual membership fees, there are no hidden costs.',
+  },
+];
 
-  useEffect(() => {
-    supabase
-      .from('membership_faqs')
-      .select('id, question, answer, order_index')
-      .eq('is_active', true)
-      .order('order_index')
-      .then(({ data, error }) => { if (!error && data) setFaqs(data); });
-  }, []);
+export default function MembershipPage() {
+  const [openFaq, setOpenFaq] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen pt-20">
@@ -86,7 +126,7 @@ export default function MembershipPage() {
                   </div>
                   <Button
                     className="mt-8 w-full bg-white text-black hover:bg-emerald-50 font-semibold text-base py-6 rounded-xl transition-all duration-200"
-                    onClick={() => window.open('https://www.wevysya.org/membership', '_blank')}
+                    onClick={() => { window.location.href = 'https://www.wevysya.org/membership'; }}
                   >
                     Choose Regular Membership
                   </Button>
@@ -94,7 +134,6 @@ export default function MembershipPage() {
 
                 {/* Right: Features Grid */}
                 <div className="lg:w-3/5 p-8 lg:p-10">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-6">What&apos;s included</p>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                     {regularFeatures.map((feature) => (
                       <li key={feature.text} className="flex items-start gap-3">
@@ -119,62 +158,58 @@ export default function MembershipPage() {
           </motion.div>
 
           {/* FAQs Section */}
-          {faqs.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="max-w-3xl mx-auto"
-            >
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold mb-3">Frequently Asked Questions</h2>
-                <p className="text-muted-foreground">Everything you need to know about WeVysya membership</p>
-              </div>
-              <div className="space-y-3">
-                {faqs.map((faq, index) => (
-                  <motion.div
-                    key={faq.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="border border-border rounded-xl overflow-hidden bg-card"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="max-w-3xl mx-auto"
+          >
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-3">Frequently Asked Questions</h2>
+              <p className="text-muted-foreground">Everything you need to know about WeVysya membership</p>
+            </div>
+            <div className="space-y-3">
+              {faqs.map((faq, index) => (
+                <motion.div
+                  key={faq.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  className="border border-border rounded-xl overflow-hidden bg-card"
+                >
+                  <button
+                    className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                    onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                    aria-expanded={openFaq === faq.id}
                   >
-                    <button
-                      className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-muted/50 transition-colors"
-                      onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-                      aria-expanded={openFaq === faq.id}
-                      aria-controls={`faq-answer-${faq.id}`}
+                    <span className="font-semibold text-foreground pr-4">{faq.question}</span>
+                    <motion.div
+                      animate={{ rotate: openFaq === faq.id ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="shrink-0"
                     >
-                      <span className="font-semibold text-foreground pr-4">{faq.question}</span>
+                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === faq.id && (
                       <motion.div
-                        animate={{ rotate: openFaq === faq.id ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="shrink-0"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className="overflow-hidden"
                       >
-                        <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                        <div className="px-6 pb-5 pt-1 text-muted-foreground leading-relaxed border-t border-border">
+                          {faq.answer}
+                        </div>
                       </motion.div>
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {openFaq === faq.id && (
-                        <motion.div
-                          id={`faq-answer-${faq.id}`}
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25, ease: 'easeInOut' }}
-                          className="overflow-hidden"
-                        >
-                          <div id={`faq-answer-${faq.id}`} className="px-6 pb-5 pt-1 text-muted-foreground leading-relaxed border-t border-border">
-                            {faq.answer}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
