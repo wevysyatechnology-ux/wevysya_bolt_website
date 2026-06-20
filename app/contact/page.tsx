@@ -60,7 +60,7 @@ export default function ContactPage() {
     if (error) {
       toast({
         title: 'Something went wrong',
-        description: 'Could not send your message. Please try again or email us directly at info@wevysya.org.',
+        description: 'Could not send your message. Please try again or email us directly at reachus@wevysya.com.',
         variant: 'destructive',
       });
     } else {
@@ -112,10 +112,10 @@ export default function ContactPage() {
                       <div>
                         <h3 className="font-semibold mb-2">Email Us</h3>
                         <a
-                          href="mailto:info@wevysya.org"
+                          href="mailto:reachus@wevysya.com"
                           className="text-sm text-muted-foreground hover:text-primary transition-colors"
                         >
-                          info@wevysya.org
+                          reachus@wevysya.com
                         </a>
                       </div>
                     </div>
