@@ -9,23 +9,23 @@ import { LeadershipVideosSection } from '@/components/home/leadership-videos-sec
 const leadership = [
   {
     name: 'Anil Guptha',
-    role: 'Founder & Global President',
-    bio: 'Visionary entrepreneur with 25+ years of experience in building business communities.',
+    role: 'Founder',
+    bio: 'Visionary entrepreneur with 14+ years of experience in the water filtration business.',
   },
   {
-    name: 'Rajesh Kumar',
-    role: 'Vice President',
-    bio: 'Leading manufacturing sector representative with extensive networking expertise.',
+    name: 'Mahendra Chimakurthi',
+    role: 'Global President',
+    bio: 'Entrepreneur with two decades of experience across the USA and India.',
   },
   {
-    name: 'Priya Sharma',
-    role: 'Secretary General',
-    bio: 'Coordinating global operations and member engagement initiatives.',
+    name: 'Dr Suvarna Kumar',
+    role: 'Governing Council President',
+    bio: 'Professor with two decades of experience bridging academia and entrepreneurship.',
   },
   {
-    name: 'Venkat Reddy',
-    role: 'Treasurer',
-    bio: 'Managing financial operations and membership investments.',
+    name: 'Santosh Setty',
+    role: 'Global President Elect',
+    bio: 'Ex-banker carrying two decades of rich financial and business experience.',
   },
 ];
 
