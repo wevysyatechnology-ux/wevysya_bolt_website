@@ -160,11 +160,11 @@ export default function ContactPage() {
                       <div>
                         <h3 className="font-semibold mb-2">Visit Us</h3>
                         <p className="text-sm text-muted-foreground">
-                          Global Office
+                          WeVysya Global Headquarters
                           <br />
-                          Bangalore, Karnataka
+                          59/3, Gandhi Bazaar Main Road
                           <br />
-                          India
+                          Basavanagudi, Bengaluru 560004
                         </p>
                       </div>
                     </div>

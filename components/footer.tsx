@@ -121,7 +121,7 @@ export function Footer() {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start space-x-3 text-gray-400">
                 <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0 text-teal-400" />
-                <span>Global Office, Bangalore, Karnataka, India</span>
+                <span>59/3, Gandhi Bazaar Main Road, Basavanagudi, Bengaluru 560004</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 flex-shrink-0 text-teal-400" />

@@ -38,7 +38,7 @@ const sections = [
     contact: {
       name: 'Mr. Anil Gupta (Grievance Officer)',
       company: 'We Vysya',
-      address: '59/3, Gandhi Bazaar Road, Basavanagudi, Bangalore – 560 004',
+      address: 'WeVysya Global Headquarters, 59/3, Gandhi Bazaar Main Road, Basavanagudi, Bengaluru 560004',
       email: 'reachus@wevysya.com',
       phone: '+91 80 415 70393',
       website: 'www.wevysya.com',
