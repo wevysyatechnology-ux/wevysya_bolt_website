@@ -144,7 +144,12 @@ export function Footer() {
             © {currentYear} WeVysya - Arya Vysya Entrepreneurs Grid. All rights
             reserved.
           </p>
-          <p className="mt-3">
+          <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-gray-600">
+            <Link href="/terms" className="hover:text-teal-400 transition-colors">Terms &amp; Conditions</Link>
+            <Link href="/privacy" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
+            <Link href="/refund" className="hover:text-teal-400 transition-colors">Refund Policy</Link>
+          </div>
+          <p className="mt-4">
             <span className="font-bold gradient-text text-lg">
               "STOP THINKING I, START THINKING WE"
             </span>
