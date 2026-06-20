@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import { ConditionalChrome, ConditionalFooter } from '@/components/conditional-chrome';
 import { Toaster } from '@/components/ui/toaster';
 import { VideoPlayProvider } from '@/components/video-play-context';
+import { ConsentBanner } from '@/components/consent-banner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -51,6 +52,7 @@ export default function RootLayout({
             <ConditionalChrome />
             <main className="min-h-screen">{children}</main>
             <ConditionalFooter />
+            <ConsentBanner />
           </VideoPlayProvider>
           <Toaster />
         </ThemeProvider>
