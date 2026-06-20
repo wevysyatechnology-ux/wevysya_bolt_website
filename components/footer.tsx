@@ -125,14 +125,14 @@ export function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 flex-shrink-0 text-teal-400" />
-                <a href="mailto:info@wevysya.org" className="text-gray-400 hover:text-teal-400 transition-colors">
-                  info@wevysya.org
+                <a href="mailto:reachus@wevysya.com" className="text-gray-400 hover:text-teal-400 transition-colors">
+                  reachus@wevysya.com
                 </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 flex-shrink-0 text-teal-400" />
-                <a href="tel:+919876543210" className="text-gray-400 hover:text-teal-400 transition-colors">
-                  +91 98765 43210
+                <a href="tel:+919886128128" className="text-gray-400 hover:text-teal-400 transition-colors">
+                  +91 98861 28128
                 </a>
               </li>
             </ul>

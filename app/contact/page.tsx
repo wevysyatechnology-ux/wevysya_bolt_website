@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Loader as Loader2 } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
 import { supabase } from '@/lib/supabase';
 
@@ -136,10 +136,10 @@ export default function ContactPage() {
                       <div>
                         <h3 className="font-semibold mb-2">Call Us</h3>
                         <a
-                          href="tel:+919876543210"
+                          href="tel:+919886128128"
                           className="text-sm text-muted-foreground hover:text-primary transition-colors"
                         >
-                          +91 98765 43210
+                          +91 98861 28128
                         </a>
                       </div>
                     </div>
@@ -230,7 +230,7 @@ export default function ContactPage() {
                             <FormItem>
                               <FormLabel>Phone</FormLabel>
                               <FormControl>
-                                <Input placeholder="+91 98765 43210" {...field} />
+                                <Input placeholder="+91 98861 28128" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>

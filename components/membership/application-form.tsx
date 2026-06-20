@@ -19,7 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader as Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -136,7 +136,7 @@ export function MembershipApplicationForm({
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="+91 98765 43210" {...field} />
+                  <Input placeholder="+91 98861 28128" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

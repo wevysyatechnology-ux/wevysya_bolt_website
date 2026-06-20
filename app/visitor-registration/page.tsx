@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Loader2, UserPlus } from 'lucide-react';
+import { Calendar, Loader as Loader2, UserPlus } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
 
 const formSchema = z.object({
@@ -217,7 +217,7 @@ export default function VisitorRegistrationPage() {
                             <FormItem>
                               <FormLabel>Phone Number</FormLabel>
                               <FormControl>
-                                <Input placeholder="+91 98765 43210" {...field} />
+                                <Input placeholder="+91 98861 28128" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
