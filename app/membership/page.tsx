@@ -4,22 +4,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Check, X, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
-
-const regularFeatures = [
-  { text: 'Access to bi-weekly networking meetings', included: true },
-  { text: 'Business link exchange opportunities', included: true },
-  { text: 'Connect with 2,000+ members', included: true },
-  { text: 'Attend national events (MANAM)', included: true },
-  { text: 'Member directory access', included: true },
-  { text: 'Online community platform', included: true },
-  { text: 'Personalized micro-site', included: false },
-  { text: 'Exclusive privileged events', included: false },
-  { text: 'Preferred seating at events', included: false },
-  { text: 'Investment opportunities access', included: false },
-  { text: 'No renewal required', included: false },
-];
 
 const faqs = [
   {
@@ -111,7 +97,7 @@ export default function MembershipPage() {
             <Card className="overflow-hidden border border-emerald-800/40 bg-gradient-to-br from-[#0d2b1e] to-[#0a1f16]">
               <div className="flex flex-col lg:flex-row">
                 {/* Left: Pricing Info */}
-                <div className="lg:w-2/5 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-emerald-800/30 flex flex-col justify-between">
+                <div className="p-8 lg:p-10 flex flex-col justify-between">
                   <div>
                     <span className="inline-block text-xs font-semibold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full mb-4">
                       Regular Membership
@@ -132,27 +118,6 @@ export default function MembershipPage() {
                   </Button>
                 </div>
 
-                {/* Right: Features Grid */}
-                <div className="lg:w-3/5 p-8 lg:p-10">
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-                    {regularFeatures.map((feature) => (
-                      <li key={feature.text} className="flex items-start gap-3">
-                        {feature.included ? (
-                          <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                            <Check className="h-3 w-3 text-emerald-400" />
-                          </span>
-                        ) : (
-                          <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-gray-800 flex items-center justify-center">
-                            <X className="h-3 w-3 text-gray-500" />
-                          </span>
-                        )}
-                        <span className={feature.included ? 'text-gray-200 text-sm' : 'text-gray-500 text-sm'}>
-                          {feature.text}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               </div>
             </Card>
           </motion.div>
