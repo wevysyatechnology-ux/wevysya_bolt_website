@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Check, X, ChevronDown } from 'lucide-react';
-import { MembershipApplicationForm } from '@/components/membership/application-form';
 import { AnimatedBackground } from '@/components/animated-background';
 import { supabase } from '@/lib/supabase';
 
@@ -31,7 +30,6 @@ const regularFeatures = [
 ];
 
 export default function MembershipPage() {
-  const [showForm, setShowForm] = useState(false);
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [openFaq, setOpenFaq] = useState<string | null>(null);
 
@@ -88,7 +86,7 @@ export default function MembershipPage() {
                   </div>
                   <Button
                     className="mt-8 w-full bg-white text-black hover:bg-emerald-50 font-semibold text-base py-6 rounded-xl transition-all duration-200"
-                    onClick={() => setShowForm(true)}
+                    onClick={() => window.open('https://www.wevysya.org/membership', '_blank')}
                   >
                     Choose Regular Membership
                   </Button>
@@ -119,29 +117,6 @@ export default function MembershipPage() {
               </div>
             </Card>
           </motion.div>
-
-          {/* Application Form */}
-          {showForm && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="max-w-3xl mx-auto mb-16"
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle>Membership Application</CardTitle>
-                  <CardDescription>
-                    Please fill in your details. Your application will be reviewed and
-                    you&apos;ll be notified within 2-3 business days.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MembershipApplicationForm selectedPlan="regular" />
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
 
           {/* FAQs Section */}
           {faqs.length > 0 && (
