@@ -351,7 +351,7 @@ export default function LaunchPage() {
                 className="text-5xl md:text-7xl font-bold text-white mb-4"
                 style={{ textShadow: '0 0 40px rgba(52,211,153,0.8), 0 0 80px rgba(52,211,153,0.4)' }}
               >
-                WeVysya is Live!
+                New Website is Live!
               </motion.p>
               <p className="text-emerald-400 text-lg tracking-widest uppercase font-semibold">
                 Together we rise
