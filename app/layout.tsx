@@ -10,7 +10,7 @@ import { ConsentBanner } from '@/components/consent-banner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.wevysya.com'),
+  metadataBase: new URL('https://wevysya.com'),
   title: 'WeVysya | Private Network for Arya Vysya Entrepreneurs',
   description: 'A private community for Arya Vysya business owners and entrepreneurs to swap hard-won lessons, open doors for each other, and grow together. Stop thinking I, start thinking WE.',
   robots: {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: 'https://www.wevysya.com/',
+    url: 'https://wevysya.com/',
     siteName: 'WeVysya',
     locale: 'en_IN',
     title: 'WeVysya | Private Network for Arya Vysya Entrepreneurs',
@@ -52,10 +52,18 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'WeVysya',
-  url: 'https://www.wevysya.com/',
-  logo: 'https://www.wevysya.com/wevysya-logo.png',
+  url: 'https://wevysya.com/',
+  logo: 'https://wevysya.com/wevysya-logo.png',
   email: 'reachus@wevysya.com',
   telephone: '+91-98861-28128',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '59/3, Gandhi Bazaar Main Road',
+    addressLocality: 'Basavanagudi',
+    addressRegion: 'Karnataka',
+    postalCode: '560004',
+    addressCountry: 'IN',
+  },
   sameAs: [
     'https://instagram.com/wevysya',
     'https://facebook.com/wevysya',
