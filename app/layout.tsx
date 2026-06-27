@@ -10,28 +10,57 @@ import { ConsentBanner } from '@/components/consent-banner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://wevysya.org'),
-  title: 'WeVysya - Arya Vysya Entrepreneurs Grid',
-  description: 'A global networking community for Arya Vysya business owners and entrepreneurs. United we stand, divided we fall.',
-  keywords: 'WeVysya, Arya Vysya, Entrepreneurs, Business Network, Networking, India',
+  metadataBase: new URL('https://www.wevysya.com'),
+  title: 'WeVysya | Private Network for Arya Vysya Entrepreneurs',
+  description: 'A private community for Arya Vysya business owners and entrepreneurs to swap hard-won lessons, open doors for each other, and grow together. Stop thinking I, start thinking WE.',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { 'max-image-preview': 'large' },
+  },
+  alternates: {
+    canonical: '/',
+  },
+  icons: {
+    icon: '/wevysya-logo.png',
+  },
   openGraph: {
-    title: 'WeVysya - Arya Vysya Entrepreneurs Grid',
-    description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
+    type: 'website',
+    url: 'https://www.wevysya.com/',
+    siteName: 'WeVysya',
+    locale: 'en_IN',
+    title: 'WeVysya | Private Network for Arya Vysya Entrepreneurs',
+    description: 'A private community for Arya Vysya business owners and entrepreneurs to swap hard-won lessons, open doors, and grow together.',
     images: [
       {
         url: '/wevysya_social.webp',
         width: 1200,
         height: 630,
-        alt: 'WeVysya - Arya Vysya Entrepreneurs Grid',
+        alt: 'WeVysya | Private Network for Arya Vysya Entrepreneurs',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WeVysya - Arya Vysya Entrepreneurs Grid',
-    description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
+    title: 'WeVysya | Private Network for Arya Vysya Entrepreneurs',
+    description: 'A private community for Arya Vysya business owners and entrepreneurs to swap hard-won lessons, open doors, and grow together.',
     images: ['/wevysya_social.webp'],
   },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'WeVysya',
+  url: 'https://www.wevysya.com/',
+  logo: 'https://www.wevysya.com/wevysya-logo.png',
+  email: 'reachus@wevysya.com',
+  telephone: '+91-98861-28128',
+  sameAs: [
+    'https://instagram.com/wevysya',
+    'https://facebook.com/wevysya',
+    'https://youtube.com/@wevysya',
+  ],
 };
 
 export default function RootLayout({
@@ -41,6 +70,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
