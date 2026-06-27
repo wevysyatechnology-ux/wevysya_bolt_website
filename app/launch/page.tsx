@@ -374,6 +374,7 @@ export default function LaunchPage() {
                 { value: '27+', label: 'Houses' },
                 { value: '2,000+', label: 'Memberships' },
                 { value: '3,83,422+', label: 'Links Generated' },
+                { value: '9,000+ Cr', label: 'Deals Generated' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
                   <div className="text-2xl font-bold text-white">{stat.value}</div>
