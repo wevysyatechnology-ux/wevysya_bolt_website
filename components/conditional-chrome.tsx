@@ -6,14 +6,12 @@ import { Footer } from '@/components/footer';
 
 export function ConditionalChrome() {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith('/admin');
-  if (isAdmin) return null;
+  if (pathname.startsWith('/admin') || pathname === '/launch') return null;
   return <Navigation />;
 }
 
 export function ConditionalFooter() {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith('/admin');
-  if (isAdmin) return null;
+  if (pathname.startsWith('/admin') || pathname === '/launch') return null;
   return <Footer />;
 }
