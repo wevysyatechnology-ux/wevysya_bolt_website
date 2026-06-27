@@ -14,7 +14,7 @@ const benefits = [
     icon: TrendingUp,
     title: 'Business Growth',
     description:
-      'Access to ₹540+ crores in closed deals and countless opportunities for collaboration.',
+    'Access to ₹92,47,83,98,269+ in deals generated and countless opportunities for collaboration.',
   },
   {
     icon: Users,
@@ -32,7 +32,7 @@ const benefits = [
     icon: Globe,
     title: 'Global Reach',
     description:
-      'Connect with members across 19+ countries including USA, UAE, Australia, and more.',
+      '3,83,422+ business links generated through our network, connecting members across South India and beyond.',
   },
   {
     icon: Zap,

@@ -241,8 +241,8 @@ export function HeroSection() {
             </div>
 
             <div style={{ fontSize:'13px', color:'rgba(255,255,255,0.65)', lineHeight:1.4 }}>
-              <div><strong style={{ color:'#FFFFFF', fontWeight:500 }}>2,400+ vetted members</strong> · 32 countries · 40+ industries</div>
-              <div><span style={{ color:'#34D399', letterSpacing:'2px', fontSize:'12px' }}>★★★★★</span> 4.9 average member rating</div>
+              <div><strong style={{ color:'#FFFFFF', fontWeight:500 }}>2,000+ memberships processed</strong> · South India &amp; global virtual presence</div>
+              <div><span style={{ color:'#34D399', letterSpacing:'2px', fontSize:'12px' }}>★★★★★</span> 27+ Houses launched</div>
             </div>
           </div>
         </div>
@@ -279,8 +279,8 @@ export function HeroSection() {
             textAlign:'center', animation:'hero-breathe 5s ease-in-out infinite',
           }}>
             <div style={{ fontSize:'10px', letterSpacing:'0.18em', textTransform:'uppercase', color:'#34D399', marginBottom:'12px', fontWeight:500 }}>Your circle</div>
-            <div className="hero-v3-center-value" style={{ fontSize:'36px', fontWeight:700, lineHeight:1, letterSpacing:'-0.02em', marginBottom:'8px', color:'#FFFFFF' }}>2,431</div>
-            <div style={{ fontSize:'12px', color:'rgba(255,255,255,0.65)', lineHeight:1.4 }}>owners, operators<br />&amp; entrepreneurs</div>
+            <div className="hero-v3-center-value" style={{ fontSize:'36px', fontWeight:700, lineHeight:1, letterSpacing:'-0.02em', marginBottom:'8px', color:'#FFFFFF' }}>2,000+</div>
+            <div style={{ fontSize:'12px', color:'rgba(255,255,255,0.65)', lineHeight:1.4 }}>memberships<br />processed</div>
           </div>
 
           {/* Member chips */}

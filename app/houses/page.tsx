@@ -237,8 +237,8 @@ export default function HousesPage() {
   }, [selCountry, selState, selZone]);
 
   const statsCards = [
-    { icon: Building2, value: totalHouseCount > 0 ? `${totalHouseCount}+` : '—', label: 'Active Houses', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30' },
-    { icon: Users, value: '1720+', label: 'Members', color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/30' },
+    { icon: Building2, value: totalHouseCount > 0 ? `${totalHouseCount}+` : '27+', label: 'Active Houses', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30' },
+    { icon: Users, value: '2000+', label: 'Memberships Processed', color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/30' },
     { icon: Calendar, value: 'Every 15 Days', label: 'House Meet', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30' },
   ];
 
