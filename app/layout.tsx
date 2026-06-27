@@ -19,10 +19,10 @@ export const metadata: Metadata = {
     description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
     images: [
       {
-        url: '/wevysya-logo.png',
-        width: 512,
-        height: 512,
-        alt: 'WeVysya Logo',
+        url: '/wevysya_social.webp',
+        width: 1200,
+        height: 630,
+        alt: 'WeVysya - Arya Vysya Entrepreneurs Grid',
       },
     ],
   },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'WeVysya - Arya Vysya Entrepreneurs Grid',
     description: 'A global networking community for Arya Vysya business owners and entrepreneurs.',
-    images: ['/wevysya-logo.png'],
+    images: ['/wevysya_social.webp'],
   },
 };
 
