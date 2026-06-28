@@ -10,8 +10,8 @@ import { supabase } from '@/lib/supabase';
 import type { LeadershipTeamMember } from '@/lib/supabase';
 
 const TEAM_SECTIONS = [
-  'Governing Council',
   'Global Executive Board',
+  'Governing Council',
   'Global Support Team',
   'State Team',
   'Zonal Team',
