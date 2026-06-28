@@ -98,3 +98,15 @@ export type EventVideo = {
   is_active?: boolean;
   created_at?: string;
 };
+
+export type LeadershipTeamMember = {
+  id: string;
+  name: string;
+  designation: string;
+  bio: string;
+  photo_url: string;
+  order_index: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+};

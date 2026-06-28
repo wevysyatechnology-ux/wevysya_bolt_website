@@ -1,58 +1,42 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Target, Eye, TrendingUp, Users } from 'lucide-react';
 import { AnimatedBackground } from '@/components/animated-background';
 import { LeadershipVideosSection } from '@/components/home/leadership-videos-section';
+import { supabase } from '@/lib/supabase';
+import type { LeadershipTeamMember } from '@/lib/supabase';
 
-const leadership = [
-  {
-    name: 'Anil Guptha',
-    role: 'Founder',
-    bio: 'Visionary entrepreneur with 14+ years of experience in the water filtration business.',
-  },
-  {
-    name: 'Mahendra Chimakurthi',
-    role: 'Global President',
-    bio: 'Entrepreneur with two decades of experience across the USA and India.',
-  },
-  {
-    name: 'Dr Suvarna Kumar',
-    role: 'Governing Council President',
-    bio: 'Professor with two decades of experience bridging academia and entrepreneurship.',
-  },
-  {
-    name: 'Santosh Setty',
-    role: 'Global President Elect',
-    bio: 'Ex-banker carrying two decades of rich financial and business experience.',
-  },
+const FALLBACK_LEADERSHIP: LeadershipTeamMember[] = [
+  { id: '1', name: 'Anil Guptha',          designation: 'Founder',                    bio: 'Visionary entrepreneur with 14+ years of experience in the water filtration business.', photo_url: '', order_index: 0, is_active: true },
+  { id: '2', name: 'Mahendra Chimakurthi', designation: 'Global President',            bio: 'Entrepreneur with two decades of experience across the USA and India.',                   photo_url: '', order_index: 1, is_active: true },
+  { id: '3', name: 'Dr Suvarna Kumar',     designation: 'Governing Council President', bio: 'Professor with two decades of experience bridging academia and entrepreneurship.',          photo_url: '', order_index: 2, is_active: true },
+  { id: '4', name: 'Santosh Setty',        designation: 'Global President Elect',      bio: 'Ex-banker carrying two decades of rich financial and business experience.',                  photo_url: '', order_index: 3, is_active: true },
 ];
 
 const values = [
-  {
-    icon: Users,
-    title: 'Community First',
-    description: 'We believe in the power of collective growth over individual success.',
-  },
-  {
-    icon: Target,
-    title: 'Trust & Integrity',
-    description: 'Building relationships based on transparency and ethical business practices.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Mutual Growth',
-    description: 'Creating opportunities that benefit all members of our community.',
-  },
-  {
-    icon: Eye,
-    title: 'Long-term Vision',
-    description: 'Focusing on sustainable business relationships that last generations.',
-  },
+  { icon: Users,      title: 'Community First',  description: 'We believe in the power of collective growth over individual success.' },
+  { icon: Target,     title: 'Trust & Integrity', description: 'Building relationships based on transparency and ethical business practices.' },
+  { icon: TrendingUp, title: 'Mutual Growth',     description: 'Creating opportunities that benefit all members of our community.' },
+  { icon: Eye,        title: 'Long-term Vision',  description: 'Focusing on sustainable business relationships that last generations.' },
 ];
 
 export default function AboutPage() {
+  const [leadership, setLeadership] = useState<LeadershipTeamMember[]>(FALLBACK_LEADERSHIP);
+
+  useEffect(() => {
+    supabase
+      .from('leadership_team')
+      .select('*')
+      .eq('is_active', true)
+      .order('order_index')
+      .then(({ data }) => {
+        if (data && data.length > 0) setLeadership(data);
+      });
+  }, []);
+
   return (
     <div className="min-h-screen pt-20">
       <section className="relative py-20 bg-black overflow-hidden">
@@ -68,7 +52,7 @@ export default function AboutPage() {
               About WeVysya
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              WeVysya is the world's premier Arya Vysya Entrepreneurs Grid,
+              WeVysya is the world&apos;s premier Arya Vysya Entrepreneurs Grid,
               connecting business owners and entrepreneurs globally. We believe in
               the power of community, collaboration, and shared success.
             </p>
@@ -93,8 +77,8 @@ export default function AboutPage() {
                   <p className="text-muted-foreground leading-relaxed">
                     To create a global ecosystem where Arya Vysya entrepreneurs
                     thrive through meaningful connections, knowledge sharing, and
-                    collaborative business growth. We transform "I" thinking into
-                    "WE" thinking.
+                    collaborative business growth. We transform &quot;I&quot; thinking into
+                    &quot;WE&quot; thinking.
                   </p>
                 </CardContent>
               </Card>
@@ -179,7 +163,7 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {leadership.map((leader, index) => (
                 <motion.div
-                  key={leader.name}
+                  key={leader.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -189,19 +173,30 @@ export default function AboutPage() {
                   <Card className="h-full text-center hover:shadow-xl hover:shadow-teal-500/10 transition-all">
                     <CardContent className="p-6">
                       <motion.div
-                        className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-4 mx-auto"
-                        whileHover={{ rotate: 360, scale: 1.1 }}
-                        transition={{ duration: 0.5 }}
+                        className="w-20 h-20 rounded-full overflow-hidden mb-4 mx-auto"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.3 }}
                       >
-                        <span className="text-white font-bold text-2xl">
-                          {leader.name.charAt(0)}
-                        </span>
+                        {leader.photo_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={leader.photo_url}
+                            alt={leader.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                            <span className="text-white font-bold text-2xl">
+                              {leader.name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
                       </motion.div>
                       <h3 className="font-semibold text-lg mb-1">
                         {leader.name}
                       </h3>
                       <p className="text-sm text-emerald-600 dark:text-emerald-400 mb-3">
-                        {leader.role}
+                        {leader.designation}
                       </p>
                       <p className="text-sm text-muted-foreground">{leader.bio}</p>
                     </CardContent>

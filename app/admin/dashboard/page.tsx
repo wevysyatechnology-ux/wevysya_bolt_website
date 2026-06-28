@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import type { LeadershipVideo, TestimonialVideo, EventVideo, BlogPost } from '@/lib/supabase';
+import type { LeadershipVideo, TestimonialVideo, EventVideo, BlogPost, LeadershipTeamMember } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,10 +45,11 @@ const GLOBAL_LEADER_ROLES = [
   'Council President',
 ] as const;
 
-type Section = 'leaders' | 'blog_posts' | 'leadership_videos' | 'testimonial_videos' | 'event_videos' | 'membership_faqs' | 'house_management' | 'upcoming_events';
+type Section = 'leaders' | 'leadership_team' | 'blog_posts' | 'leadership_videos' | 'testimonial_videos' | 'event_videos' | 'membership_faqs' | 'house_management' | 'upcoming_events';
 
 const NAV_ITEMS: { key: Section; label: string; icon: React.ElementType; group?: string }[] = [
   { key: 'leaders', label: 'Global Leaders Network', icon: Users, group: 'Content' },
+  { key: 'leadership_team', label: 'Leadership Team', icon: Users, group: 'Content' },
   { key: 'blog_posts', label: 'Blog Posts', icon: Newspaper, group: 'Content' },
   { key: 'leadership_videos', label: 'Meet Our Leaders', icon: Video, group: 'Content' },
   { key: 'testimonial_videos', label: 'Success Stories', icon: Star, group: 'Content' },
@@ -83,6 +84,7 @@ export default function AdminDashboard() {
 
   const [faqs, setFaqs] = useState<MembershipFaq[]>([]);
   const [globalLeaders, setGlobalLeaders] = useState<GlobalLeader[]>([]);
+  const [leadershipTeam, setLeadershipTeam] = useState<LeadershipTeamMember[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [leadershipVideos, setLeadershipVideos] = useState<LeadershipVideo[]>([]);
   const [testimonialVideos, setTestimonialVideos] = useState<TestimonialVideo[]>([]);
@@ -98,9 +100,10 @@ export default function AdminDashboard() {
   };
 
   const fetchAll = useCallback(async () => {
-    const [fq, gl, bp, lv, tv, ev, ue] = await Promise.all([
+    const [fq, gl, lt, bp, lv, tv, ev, ue] = await Promise.all([
       supabase.from('membership_faqs').select('*').order('order_index'),
       supabase.from('global_leaders').select('*'),
+      supabase.from('leadership_team').select('*').order('order_index'),
       supabase.from('blog_posts').select('*').order('created_at', { ascending: false }),
       supabase.from('leadership_videos').select('*').order('order_index'),
       supabase.from('testimonial_videos').select('*').order('order_index'),
@@ -109,6 +112,7 @@ export default function AdminDashboard() {
     ]);
     if (fq.data) setFaqs(fq.data);
     if (gl.data) setGlobalLeaders(gl.data);
+    if (lt.data) setLeadershipTeam(lt.data);
     if (bp.data) setBlogPosts(bp.data);
     if (lv.data) setLeadershipVideos(lv.data);
     if (tv.data) setTestimonialVideos(tv.data);
@@ -212,6 +216,13 @@ export default function AdminDashboard() {
               onSave={(item) => saveItem('global_leaders', item as unknown as Record<string, unknown>)}
             />
           )}
+          {activeSection === 'leadership_team' && (
+            <LeadershipTeamSection
+              items={leadershipTeam}
+              onSave={(item) => saveItem('leadership_team', item as unknown as Record<string, unknown>)}
+              onDelete={(id) => deleteItem('leadership_team', id)}
+            />
+          )}
           {activeSection === 'blog_posts' && (
             <BlogPostsSection
               items={blogPosts}
@@ -280,6 +291,113 @@ export default function AdminDashboard() {
           >
             {toast}
           </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ===== Leadership Team Section =====
+function emptyLeadershipTeamMember(): Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'> {
+  return { name: '', designation: '', bio: '', photo_url: '', order_index: 0, is_active: true };
+}
+
+function LeadershipTeamSection({
+  items,
+  onSave,
+  onDelete,
+}: {
+  items: LeadershipTeamMember[];
+  onSave: (item: LeadershipTeamMember | Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'>) => void;
+  onDelete: (id: string) => void;
+}) {
+  const [editing, setEditing] = useState<(LeadershipTeamMember | Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'>) | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-foreground">Leadership Team</h2>
+          <p className="text-muted-foreground text-sm mt-1">Manage the leadership team shown on the About page</p>
+        </div>
+        <Button onClick={() => setEditing(emptyLeadershipTeamMember())} className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold gap-2">
+          <Plus className="w-4 h-4" /> Add Member
+        </Button>
+      </div>
+
+      {editing && (
+        <ItemForm
+          title={'id' in editing ? 'Edit Member' : 'Add New Member'}
+          onClose={() => setEditing(null)}
+          onSubmit={() => { onSave(editing); setEditing(null); }}
+        >
+          <FormField label="Name" value={(editing as LeadershipTeamMember).name} onChange={v => setEditing({ ...editing, name: v })} />
+          <FormField label="Designation / Role" value={(editing as LeadershipTeamMember).designation} onChange={v => setEditing({ ...editing, designation: v })} />
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label className="text-xs font-medium text-muted-foreground">Bio</Label>
+            <textarea
+              value={(editing as LeadershipTeamMember).bio}
+              onChange={e => setEditing({ ...editing, bio: e.target.value })}
+              placeholder="Brief bio..."
+              rows={3}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+            />
+          </div>
+          <FormField label="Order" type="number" value={String((editing as LeadershipTeamMember).order_index ?? 0)} onChange={v => setEditing({ ...editing, order_index: parseInt(v) || 0 })} />
+          <ToggleField label="Active" value={(editing as LeadershipTeamMember).is_active} onChange={v => setEditing({ ...editing, is_active: v })} />
+          <ImageUploadField label="Photo" value={(editing as LeadershipTeamMember).photo_url} onChange={v => setEditing({ ...editing, photo_url: v })} folder="leadership-team" />
+        </ItemForm>
+      )}
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {items.length === 0 && (
+          <div className="col-span-full text-center py-12 text-muted-foreground border border-dashed border-border rounded-xl text-sm">
+            No members yet. Click &quot;Add Member&quot; to create one.
+          </div>
+        )}
+        {items.map((member, i) => (
+          <motion.div
+            key={member.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07 }}
+            className="bg-card border border-border rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all group"
+          >
+            <div className="relative w-full bg-muted overflow-hidden" style={{ aspectRatio: '1/1' }}>
+              {member.photo_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600">
+                  <span className="text-white font-bold text-3xl">{member.name.charAt(0)}</span>
+                </div>
+              )}
+              <div className={`absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-medium border ${member.is_active ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-muted text-muted-foreground border-border'}`}>
+                {member.is_active ? 'Active' : 'Inactive'}
+              </div>
+            </div>
+            <div className="p-4 space-y-1">
+              <p className="text-xs text-emerald-500 font-semibold uppercase tracking-wide truncate">{member.designation}</p>
+              <p className="font-semibold text-foreground text-sm truncate">{member.name || <span className="text-muted-foreground italic">Not set</span>}</p>
+              <p className="text-xs text-muted-foreground line-clamp-2">{member.bio}</p>
+              <div className="flex gap-2 pt-2">
+                <Button size="sm" variant="outline" onClick={() => setEditing({ ...member })} className="flex-1 h-8 text-xs">Edit</Button>
+                <Button size="sm" variant="ghost" onClick={() => setConfirmingId(member.id)} className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {confirmingId && (
+          <ConfirmDialog
+            onConfirm={() => { onDelete(confirmingId); setConfirmingId(null); }}
+            onCancel={() => setConfirmingId(null)}
+          />
         )}
       </AnimatePresence>
     </div>
