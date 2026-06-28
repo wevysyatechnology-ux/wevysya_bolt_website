@@ -315,6 +315,7 @@ export default function AdminDashboard() {
 // ===== Leadership Team Section =====
 const LEADERSHIP_TEAM_SECTIONS = [
   'Governing Council',
+  'Global Advisory Board',
   'Global Executive Board',
   'Global Support Team',
   'State Team',

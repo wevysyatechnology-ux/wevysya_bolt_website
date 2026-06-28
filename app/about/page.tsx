@@ -12,6 +12,7 @@ import type { LeadershipTeamMember } from '@/lib/supabase';
 const TEAM_SECTIONS = [
   'Global Executive Board',
   'Governing Council',
+  'Global Advisory Board',
   'Global Support Team',
   'State Team',
   'Zonal Team',
