@@ -298,8 +298,16 @@ export default function AdminDashboard() {
 }
 
 // ===== Leadership Team Section =====
+const LEADERSHIP_TEAM_SECTIONS = [
+  'Governing Council',
+  'Global Executive Board',
+  'Global Support Team',
+  'State Team',
+  'Zonal Team',
+] as const;
+
 function emptyLeadershipTeamMember(): Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'> {
-  return { name: '', designation: '', bio: '', photo_url: '', order_index: 0, is_active: true };
+  return { name: '', designation: '', bio: '', photo_url: '', team_section: 'Governing Council', order_index: 0, is_active: true };
 }
 
 function LeadershipTeamSection({
@@ -313,6 +321,10 @@ function LeadershipTeamSection({
 }) {
   const [editing, setEditing] = useState<(LeadershipTeamMember | Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'>) | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('All');
+
+  const tabs = ['All', ...LEADERSHIP_TEAM_SECTIONS];
+  const filteredItems = activeTab === 'All' ? items : items.filter(m => m.team_section === activeTab);
 
   return (
     <div className="space-y-6">
@@ -326,6 +338,26 @@ function LeadershipTeamSection({
         </Button>
       </div>
 
+      {/* Section tabs */}
+      <div className="flex flex-wrap gap-2">
+        {tabs.map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border
+              ${activeTab === tab
+                ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
+                : 'text-muted-foreground border-border hover:border-emerald-500/30 hover:text-foreground'
+              }`}
+          >
+            {tab}
+            <span className="ml-1.5 opacity-60">
+              {tab === 'All' ? items.length : items.filter(m => m.team_section === tab).length}
+            </span>
+          </button>
+        ))}
+      </div>
+
       {editing && (
         <ItemForm
           title={'id' in editing ? 'Edit Member' : 'Add New Member'}
@@ -334,6 +366,19 @@ function LeadershipTeamSection({
         >
           <FormField label="Name" value={(editing as LeadershipTeamMember).name} onChange={v => setEditing({ ...editing, name: v })} />
           <FormField label="Designation / Role" value={(editing as LeadershipTeamMember).designation} onChange={v => setEditing({ ...editing, designation: v })} />
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Team Section</Label>
+            <select
+              value={(editing as LeadershipTeamMember).team_section}
+              onChange={e => setEditing({ ...editing, team_section: e.target.value })}
+              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {LEADERSHIP_TEAM_SECTIONS.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <FormField label="Order" type="number" value={String((editing as LeadershipTeamMember).order_index ?? 0)} onChange={v => setEditing({ ...editing, order_index: parseInt(v) || 0 })} />
           <div className="space-y-1.5 sm:col-span-2">
             <Label className="text-xs font-medium text-muted-foreground">Bio</Label>
             <textarea
@@ -344,24 +389,23 @@ function LeadershipTeamSection({
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
             />
           </div>
-          <FormField label="Order" type="number" value={String((editing as LeadershipTeamMember).order_index ?? 0)} onChange={v => setEditing({ ...editing, order_index: parseInt(v) || 0 })} />
           <ToggleField label="Active" value={(editing as LeadershipTeamMember).is_active} onChange={v => setEditing({ ...editing, is_active: v })} />
           <ImageUploadField label="Photo" value={(editing as LeadershipTeamMember).photo_url} onChange={v => setEditing({ ...editing, photo_url: v })} folder="leadership-team" />
         </ItemForm>
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-        {items.length === 0 && (
+        {filteredItems.length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground border border-dashed border-border rounded-xl text-sm">
             No members yet. Click &quot;Add Member&quot; to create one.
           </div>
         )}
-        {items.map((member, i) => (
+        {filteredItems.map((member, i) => (
           <motion.div
             key={member.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07 }}
+            transition={{ delay: i * 0.05 }}
             className="bg-card border border-border rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all group"
           >
             <div className="relative w-full bg-muted overflow-hidden" style={{ aspectRatio: '1/1' }}>
@@ -378,6 +422,7 @@ function LeadershipTeamSection({
               </div>
             </div>
             <div className="p-4 space-y-1">
+              <p className="text-xs text-teal-500/80 font-medium truncate">{member.team_section}</p>
               <p className="text-xs text-emerald-500 font-semibold uppercase tracking-wide truncate">{member.designation}</p>
               <p className="font-semibold text-foreground text-sm truncate">{member.name || <span className="text-muted-foreground italic">Not set</span>}</p>
               <p className="text-xs text-muted-foreground line-clamp-2">{member.bio}</p>

@@ -105,6 +105,7 @@ export type LeadershipTeamMember = {
   designation: string;
   bio: string;
   photo_url: string;
+  team_section: string;
   order_index: number;
   is_active: boolean;
   created_at?: string;
