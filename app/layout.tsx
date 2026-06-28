@@ -6,6 +6,7 @@ import { ConditionalChrome, ConditionalFooter } from '@/components/conditional-c
 import { Toaster } from '@/components/ui/toaster';
 import { VideoPlayProvider } from '@/components/video-play-context';
 import { ConsentBanner } from '@/components/consent-banner';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -85,6 +86,18 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-J6VG95T0HM"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-J6VG95T0HM');
+          `}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
