@@ -221,6 +221,21 @@ export default function AdminDashboard() {
               items={leadershipTeam}
               onSave={(item) => saveItem('leadership_team', item as unknown as Record<string, unknown>)}
               onDelete={(id) => deleteItem('leadership_team', id)}
+              onReorder={async (reordered) => {
+                setSaving(true);
+                await Promise.all(
+                  reordered.map(m =>
+                    supabase.from('leadership_team').update({
+                      order_index: m.order_index,
+                      team_section: m.team_section,
+                      updated_at: new Date().toISOString(),
+                    }).eq('id', m.id)
+                  )
+                );
+                setSaving(false);
+                showToast('Order saved!');
+                fetchAll();
+              }}
             />
           )}
           {activeSection === 'blog_posts' && (
@@ -314,24 +329,178 @@ function LeadershipTeamSection({
   items,
   onSave,
   onDelete,
+  onReorder,
 }: {
   items: LeadershipTeamMember[];
   onSave: (item: LeadershipTeamMember | Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'>) => void;
   onDelete: (id: string) => void;
+  onReorder: (reordered: Pick<LeadershipTeamMember, 'id' | 'order_index' | 'team_section'>[]) => void;
 }) {
   const [editing, setEditing] = useState<(LeadershipTeamMember | Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'>) | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('All');
 
+  // DnD state
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [dragOverSection, setDragOverSection] = useState<string | null>(null);
+
   const tabs = ['All', ...LEADERSHIP_TEAM_SECTIONS];
-  const filteredItems = activeTab === 'All' ? items : items.filter(m => m.team_section === activeTab);
+
+  // Returns a locally sorted list for display; does not mutate props
+  const sortedItems = [...items].sort((a, b) => {
+    const sectionOrder = LEADERSHIP_TEAM_SECTIONS.indexOf(a.team_section as typeof LEADERSHIP_TEAM_SECTIONS[number]) -
+      LEADERSHIP_TEAM_SECTIONS.indexOf(b.team_section as typeof LEADERSHIP_TEAM_SECTIONS[number]);
+    if (sectionOrder !== 0) return sectionOrder;
+    return a.order_index - b.order_index;
+  });
+
+  const itemsForTab = activeTab === 'All' ? sortedItems : sortedItems.filter(m => m.team_section === activeTab);
+
+  // Sections that actually have members (for grouped All view)
+  const populatedSections = LEADERSHIP_TEAM_SECTIONS.filter(s => items.some(m => m.team_section === s));
+
+  function handleDragStart(e: React.DragEvent, id: string) {
+    setDraggingId(id);
+    e.dataTransfer.effectAllowed = 'move';
+    // ghost image is the default browser drag ghost
+  }
+
+  function handleDragOver(e: React.DragEvent, id: string) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (id !== dragOverId) setDragOverId(id);
+  }
+
+  function handleDragOverSection(e: React.DragEvent, section: string) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverSection(section);
+  }
+
+  function handleDrop(e: React.DragEvent, targetId: string, targetSection: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!draggingId || draggingId === targetId) {
+      setDraggingId(null); setDragOverId(null); setDragOverSection(null);
+      return;
+    }
+    applyReorder(draggingId, targetId, targetSection);
+    setDraggingId(null); setDragOverId(null); setDragOverSection(null);
+  }
+
+  // Drop onto an empty section zone (no card target)
+  function handleDropOnSection(e: React.DragEvent, section: string) {
+    e.preventDefault();
+    if (!draggingId) { setDraggingId(null); setDragOverSection(null); return; }
+    const src = items.find(m => m.id === draggingId);
+    if (!src || src.team_section === section) { setDraggingId(null); setDragOverSection(null); return; }
+    // Move to end of section
+    const sectionItems = [...items].filter(m => m.team_section === section).sort((a, b) => a.order_index - b.order_index);
+    const newIdx = sectionItems.length;
+    const updates: Pick<LeadershipTeamMember, 'id' | 'order_index' | 'team_section'>[] = [
+      { id: draggingId, order_index: newIdx, team_section: section },
+    ];
+    onReorder(updates);
+    setDraggingId(null); setDragOverSection(null);
+  }
+
+  function applyReorder(srcId: string, tgtId: string, tgtSection: string) {
+    const src = items.find(m => m.id === srcId);
+    if (!src) return;
+
+    // Gather all items in the affected sections
+    const affectedSections = Array.from(new Set([src.team_section, tgtSection]));
+    const sectionMap: Record<string, LeadershipTeamMember[]> = {};
+    affectedSections.forEach(s => {
+      sectionMap[s] = [...items].filter(m => m.team_section === s).sort((a, b) => a.order_index - b.order_index);
+    });
+
+    // Remove src from its current section
+    sectionMap[src.team_section] = sectionMap[src.team_section].filter(m => m.id !== srcId);
+
+    // Insert src before tgt in tgtSection
+    const tgtList = sectionMap[tgtSection];
+    const tgtIdx = tgtList.findIndex(m => m.id === tgtId);
+    const insertAt = tgtIdx === -1 ? tgtList.length : tgtIdx;
+    const movedItem = { ...src, team_section: tgtSection };
+    tgtList.splice(insertAt, 0, movedItem);
+
+    // Recalculate order_index for all items in affected sections
+    const updates: Pick<LeadershipTeamMember, 'id' | 'order_index' | 'team_section'>[] = [];
+    affectedSections.forEach(s => {
+      sectionMap[s].forEach((m, i) => {
+        const original = items.find(x => x.id === m.id);
+        if (!original || original.order_index !== i || original.team_section !== s) {
+          updates.push({ id: m.id, order_index: i, team_section: s });
+        }
+      });
+    });
+
+    if (updates.length > 0) onReorder(updates);
+  }
+
+  function handleDragEnd() {
+    setDraggingId(null); setDragOverId(null); setDragOverSection(null);
+  }
+
+  // Render a single card (shared between grouped and flat views)
+  function MemberCard({ member }: { member: LeadershipTeamMember }) {
+    const isDragging = draggingId === member.id;
+    const isDragOver = dragOverId === member.id && !isDragging;
+    return (
+      <div
+        draggable
+        onDragStart={e => handleDragStart(e, member.id)}
+        onDragOver={e => handleDragOver(e, member.id)}
+        onDrop={e => handleDrop(e, member.id, member.team_section)}
+        onDragEnd={handleDragEnd}
+        className={`bg-card border rounded-2xl overflow-hidden transition-all group cursor-grab active:cursor-grabbing select-none
+          ${isDragging ? 'opacity-40 scale-95 border-emerald-500/60' : ''}
+          ${isDragOver ? 'border-emerald-400 shadow-lg shadow-emerald-500/20 scale-[1.02]' : 'border-border hover:border-emerald-500/40'}
+        `}
+      >
+        <div className="relative w-full bg-muted overflow-hidden" style={{ aspectRatio: '1/1' }}>
+          {/* Drag handle */}
+          <div className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 rounded-md p-1">
+            <GripVertical className="w-3.5 h-3.5 text-white" />
+          </div>
+          {member.photo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 pointer-events-none" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600">
+              <span className="text-white font-bold text-3xl pointer-events-none">{member.name.charAt(0)}</span>
+            </div>
+          )}
+          <div className={`absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-medium border ${member.is_active ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-muted text-muted-foreground border-border'}`}>
+            {member.is_active ? 'Active' : 'Inactive'}
+          </div>
+        </div>
+        <div className="p-4 space-y-1">
+          {activeTab === 'All' ? null : <p className="text-xs text-teal-500/80 font-medium truncate">{member.team_section}</p>}
+          <p className="text-xs text-emerald-500 font-semibold uppercase tracking-wide truncate">{member.designation}</p>
+          <p className="font-semibold text-foreground text-sm truncate">{member.name || <span className="text-muted-foreground italic">Not set</span>}</p>
+          <p className="text-xs text-muted-foreground line-clamp-2">{member.bio}</p>
+          <div className="flex gap-2 pt-2">
+            <Button size="sm" variant="outline" onClick={() => setEditing({ ...member })} className="flex-1 h-8 text-xs">Edit</Button>
+            <Button size="sm" variant="ghost" onClick={() => setConfirmingId(member.id)} className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 shrink-0">
+              <Trash2 className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-foreground">Leadership Team</h2>
-          <p className="text-muted-foreground text-sm mt-1">Manage the leadership team shown on the About page</p>
+          <p className="text-muted-foreground text-sm mt-1">
+            Drag cards to reorder or move between sections
+          </p>
         </div>
         <Button onClick={() => setEditing(emptyLeadershipTeamMember())} className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold gap-2">
           <Plus className="w-4 h-4" /> Add Member
@@ -394,48 +563,59 @@ function LeadershipTeamSection({
         </ItemForm>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-        {filteredItems.length === 0 && (
-          <div className="col-span-full text-center py-12 text-muted-foreground border border-dashed border-border rounded-xl text-sm">
-            No members yet. Click &quot;Add Member&quot; to create one.
-          </div>
-        )}
-        {filteredItems.map((member, i) => (
-          <motion.div
-            key={member.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="bg-card border border-border rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all group"
-          >
-            <div className="relative w-full bg-muted overflow-hidden" style={{ aspectRatio: '1/1' }}>
-              {member.photo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600">
-                  <span className="text-white font-bold text-3xl">{member.name.charAt(0)}</span>
+      {/* ---- Grouped ALL view (cross-section drag) ---- */}
+      {activeTab === 'All' ? (
+        <div className="space-y-8">
+          {populatedSections.map(section => {
+            const sectionMembers = sortedItems.filter(m => m.team_section === section);
+            const isDropZone = dragOverSection === section && draggingId !== null &&
+              !sectionMembers.some(m => m.id === draggingId);
+            return (
+              <div
+                key={section}
+                onDragOver={e => handleDragOverSection(e, section)}
+                onDrop={e => handleDropOnSection(e, section)}
+                onDragLeave={() => setDragOverSection(null)}
+                className={`rounded-xl p-4 border transition-all ${isDropZone ? 'border-emerald-400/60 bg-emerald-500/5' : 'border-border/40 bg-card/30'}`}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <h3 className="text-sm font-semibold text-foreground">{section}</h3>
+                  <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{sectionMembers.length}</span>
+                  {isDropZone && (
+                    <span className="text-xs text-emerald-400 ml-auto animate-pulse">Drop to move here</span>
+                  )}
                 </div>
-              )}
-              <div className={`absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-medium border ${member.is_active ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-muted text-muted-foreground border-border'}`}>
-                {member.is_active ? 'Active' : 'Inactive'}
+                {sectionMembers.length === 0 ? (
+                  <p className="text-xs text-muted-foreground text-center py-6 border border-dashed border-border rounded-lg">
+                    Drop a member here
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {sectionMembers.map(member => (
+                      <MemberCard key={member.id} member={member} />
+                    ))}
+                  </div>
+                )}
               </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* ---- Single-section view ---- */
+        <div className="space-y-2">
+          {itemsForTab.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground border border-dashed border-border rounded-xl text-sm">
+              No members yet. Click &quot;Add Member&quot; to create one.
             </div>
-            <div className="p-4 space-y-1">
-              <p className="text-xs text-teal-500/80 font-medium truncate">{member.team_section}</p>
-              <p className="text-xs text-emerald-500 font-semibold uppercase tracking-wide truncate">{member.designation}</p>
-              <p className="font-semibold text-foreground text-sm truncate">{member.name || <span className="text-muted-foreground italic">Not set</span>}</p>
-              <p className="text-xs text-muted-foreground line-clamp-2">{member.bio}</p>
-              <div className="flex gap-2 pt-2">
-                <Button size="sm" variant="outline" onClick={() => setEditing({ ...member })} className="flex-1 h-8 text-xs">Edit</Button>
-                <Button size="sm" variant="ghost" onClick={() => setConfirmingId(member.id)} className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 shrink-0">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
-              </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {itemsForTab.map(member => (
+                <MemberCard key={member.id} member={member} />
+              ))}
             </div>
-          </motion.div>
-        ))}
-      </div>
+          )}
+        </div>
+      )}
 
       <AnimatePresence>
         {confirmingId && (
