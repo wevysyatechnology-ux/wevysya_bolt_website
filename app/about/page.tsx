@@ -16,6 +16,7 @@ const TEAM_SECTIONS = [
   'Global Support Team',
   'State Team',
   'Zonal Team',
+  'Operational Team',
 ] as const;
 
 const FALLBACK_LEADERSHIP: LeadershipTeamMember[] = [

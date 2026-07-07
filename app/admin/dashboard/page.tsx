@@ -320,6 +320,7 @@ const LEADERSHIP_TEAM_SECTIONS = [
   'Global Support Team',
   'State Team',
   'Zonal Team',
+  'Operational Team',
 ] as const;
 
 function emptyLeadershipTeamMember(): Omit<LeadershipTeamMember, 'id' | 'created_at' | 'updated_at'> {
