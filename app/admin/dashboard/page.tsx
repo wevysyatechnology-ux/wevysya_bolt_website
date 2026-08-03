@@ -2045,7 +2045,7 @@ function FileUploadField({
   const [error, setError] = useState('');
 
   const acceptMap: Record<string, string> = {
-    audio: 'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a',
+    audio: 'audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/mp4,audio/x-m4a,audio/aac',
     video: 'video/mp4,video/webm,video/quicktime,video/x-msvideo',
     image: 'image/jpeg,image/png,image/webp,image/gif',
     document: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar',
