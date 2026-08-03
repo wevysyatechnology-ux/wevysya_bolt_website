@@ -1874,12 +1874,19 @@ function emptyDownload(): Omit<Download, 'id'> {
 }
 
 function fileTypeIcon(type: string) {
-  switch (type) {
-    case 'audio': return <FileAudio className="w-10 h-10" />;
-    case 'video': return <FileVideo className="w-10 h-10" />;
-    case 'image': return <FileImage className="w-10 h-10" />;
-    default: return <FileText className="w-10 h-10" />;
-  }
+  const iconMap: Record<string, { icon: typeof FileAudio; gradient: string; ring: string }> = {
+    audio: { icon: FileAudio, gradient: 'from-emerald-500/30 to-teal-700/40', ring: 'text-emerald-400' },
+    video: { icon: FileVideo, gradient: 'from-rose-500/30 to-rose-800/40', ring: 'text-rose-400' },
+    image: { icon: FileImage, gradient: 'from-amber-500/30 to-orange-800/40', ring: 'text-amber-400' },
+    document: { icon: FileText, gradient: 'from-sky-500/30 to-blue-800/40', ring: 'text-sky-400' },
+  };
+  const config = iconMap[type] || iconMap.document;
+  const Icon = config.icon;
+  return (
+    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center border border-white/10`}>
+      <Icon className={`w-7 h-7 ${config.ring}`} strokeWidth={1.5} />
+    </div>
+  );
 }
 
 function DownloadsSection({

@@ -9,11 +9,67 @@ import { FileAudio, FileVideo, FileImage, FileText, Download as DownloadIcon, Se
 
 function typeIcon(type: string) {
   switch (type) {
-    case 'audio': return <FileAudio className="w-6 h-6" />;
-    case 'video': return <FileVideo className="w-6 h-6" />;
-    case 'image': return <FileImage className="w-6 h-6" />;
-    default: return <FileText className="w-6 h-6" />;
+    case 'audio': return <FileAudio className="w-7 h-7" />;
+    case 'video': return <FileVideo className="w-7 h-7" />;
+    case 'image': return <FileImage className="w-7 h-7" />;
+    default: return <FileText className="w-7 h-7" />;
   }
+}
+
+function AudioPreviewBanner() {
+  return (
+    <div className="w-full h-full relative bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 flex items-center justify-center overflow-hidden">
+      {/* Animated waveform bars */}
+      <div className="absolute inset-0 flex items-end justify-center gap-1.5 pb-8 opacity-30">
+        {Array.from({ length: 28 }).map((_, i) => {
+          const heights = [40, 70, 30, 90, 55, 100, 35, 80, 60, 45, 95, 50, 75, 38, 85, 65, 42, 92, 48, 78, 58, 33, 88, 52, 72, 47, 82, 62];
+          const h = heights[i % heights.length];
+          return (
+            <motion.span
+              key={i}
+              className="w-1.5 bg-white/40 rounded-full"
+              animate={{ height: [`${h * 0.4}%`, `${h}%`, `${h * 0.4}%`] }}
+              transition={{
+                duration: 1.2 + (i % 5) * 0.15,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: i * 0.04,
+              }}
+              style={{ height: `${h}%` }}
+            />
+          );
+        })}
+      </div>
+      {/* Glow ring */}
+      <div className="absolute w-32 h-32 rounded-full bg-emerald-400/20 blur-2xl" />
+      {/* Icon badge */}
+      <div className="relative z-10 w-20 h-20 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-2xl">
+        <FileAudio className="w-10 h-10 text-white" strokeWidth={1.5} />
+      </div>
+    </div>
+  );
+}
+
+function DocumentPreviewBanner() {
+  return (
+    <div className="w-full h-full relative bg-gradient-to-br from-slate-700 via-slate-800 to-slate-950 flex items-center justify-center overflow-hidden">
+      {/* Decorative grid */}
+      <div
+        className="absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+      {/* Paper stack effect */}
+      <div className="absolute w-20 h-24 rounded-lg bg-white/10 border border-white/20 rotate-[-8deg] translate-x-[-14px] translate-y-[4px]" />
+      <div className="absolute w-20 h-24 rounded-lg bg-white/15 border border-white/25 rotate-[3deg] translate-x-[14px] translate-y-[-4px]" />
+      {/* Icon badge */}
+      <div className="relative z-10 w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-2xl">
+        <FileText className="w-10 h-10 text-white" strokeWidth={1.5} />
+      </div>
+    </div>
+  );
 }
 
 function formatSize(bytes?: number) {
@@ -150,19 +206,23 @@ export default function DownloadsPage() {
                   className="group rounded-2xl overflow-hidden border border-border bg-card/80 backdrop-blur-sm hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col"
                 >
                   {/* Preview area */}
-                  <div className="relative h-44 bg-muted overflow-hidden">
+                  <div className="relative h-44 overflow-hidden">
                     {item.file_type === 'image' && item.file_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={item.file_url} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : item.file_type === 'video' && item.file_url ? (
                       <video src={item.file_url} className="w-full h-full object-cover" muted preload="metadata" />
+                    ) : item.file_type === 'audio' ? (
+                      <AudioPreviewBanner />
+                    ) : item.file_type === 'document' ? (
+                      <DocumentPreviewBanner />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 text-emerald-500/40">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-emerald-900/40">
                         {typeIcon(item.file_type)}
                       </div>
                     )}
                     <div className="absolute top-3 left-3 flex gap-2">
-                      <span className="text-xs px-2.5 py-1 rounded-full font-medium capitalize bg-black/70 backdrop-blur-sm text-emerald-400 border border-emerald-500/30">
+                      <span className="text-xs px-2.5 py-1 rounded-full font-semibold capitalize bg-black/70 backdrop-blur-sm text-emerald-300 border border-emerald-500/40">
                         {item.file_type}
                       </span>
                     </div>
