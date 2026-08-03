@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import type { LeadershipVideo, TestimonialVideo, EventVideo, BlogPost, LeadershipTeamMember } from '@/lib/supabase';
+import type { LeadershipVideo, TestimonialVideo, EventVideo, BlogPost, LeadershipTeamMember, Download } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/logo';
-import { Users, Video, Star, Clapperboard, LogOut, Plus, Trash2, Save, LayoutDashboard, X, Menu, Upload, Image as ImageIcon, Loader as Loader2, CircleHelp as HelpCircle, GripVertical, Building2, CalendarDays, Newspaper, FileVideo } from 'lucide-react';
+import { Users, Video, Star, Clapperboard, LogOut, Plus, Trash2, Save, LayoutDashboard, X, Menu, Upload, Image as ImageIcon, Loader as Loader2, CircleHelp as HelpCircle, GripVertical, Building2, CalendarDays, Newspaper, FileVideo, Download as DownloadIcon, FileAudio, FileText, FileImage } from 'lucide-react';
 import { HouseManagement } from '@/components/admin/house-management';
 
 type MembershipFaq = {
@@ -45,7 +45,7 @@ const GLOBAL_LEADER_ROLES = [
   'Council President',
 ] as const;
 
-type Section = 'leaders' | 'leadership_team' | 'blog_posts' | 'leadership_videos' | 'testimonial_videos' | 'event_videos' | 'membership_faqs' | 'house_management' | 'upcoming_events';
+type Section = 'leaders' | 'leadership_team' | 'blog_posts' | 'leadership_videos' | 'testimonial_videos' | 'event_videos' | 'membership_faqs' | 'house_management' | 'upcoming_events' | 'downloads';
 
 const NAV_ITEMS: { key: Section; label: string; icon: React.ElementType; group?: string }[] = [
   { key: 'leaders', label: 'Global Leaders Network', icon: Users, group: 'Content' },
@@ -56,6 +56,7 @@ const NAV_ITEMS: { key: Section; label: string; icon: React.ElementType; group?:
   { key: 'event_videos', label: 'Event Highlights', icon: Clapperboard, group: 'Content' },
   { key: 'upcoming_events', label: 'Upcoming Events', icon: CalendarDays, group: 'Content' },
   { key: 'membership_faqs', label: 'Membership FAQs', icon: HelpCircle, group: 'Content' },
+  { key: 'downloads', label: 'Downloads', icon: DownloadIcon, group: 'Content' },
   { key: 'house_management', label: 'House Management', icon: Building2, group: 'Organization' },
 ];
 
@@ -90,6 +91,7 @@ export default function AdminDashboard() {
   const [testimonialVideos, setTestimonialVideos] = useState<TestimonialVideo[]>([]);
   const [eventVideos, setEventVideos] = useState<EventVideo[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
+  const [downloads, setDownloads] = useState<Download[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState('');
@@ -100,7 +102,7 @@ export default function AdminDashboard() {
   };
 
   const fetchAll = useCallback(async () => {
-    const [fq, gl, lt, bp, lv, tv, ev, ue] = await Promise.all([
+    const [fq, gl, lt, bp, lv, tv, ev, ue, dl] = await Promise.all([
       supabase.from('membership_faqs').select('*').order('order_index'),
       supabase.from('global_leaders').select('*'),
       supabase.from('leadership_team').select('*').order('order_index'),
@@ -109,6 +111,7 @@ export default function AdminDashboard() {
       supabase.from('testimonial_videos').select('*').order('order_index'),
       supabase.from('event_videos').select('*').order('order_index'),
       supabase.from('upcoming_events').select('*').order('order_index'),
+      supabase.from('downloads').select('*').order('order_index'),
     ]);
     if (fq.data) setFaqs(fq.data);
     if (gl.data) setGlobalLeaders(gl.data);
@@ -118,6 +121,7 @@ export default function AdminDashboard() {
     if (tv.data) setTestimonialVideos(tv.data);
     if (ev.data) setEventVideos(ev.data);
     if (ue.data) setUpcomingEvents(ue.data);
+    if (dl.data) setDownloads(dl.data as Download[]);
   }, []);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -264,6 +268,13 @@ export default function AdminDashboard() {
               items={eventVideos}
               onSave={(item) => saveItem('event_videos', item as unknown as Record<string, unknown>)}
               onDelete={(id) => deleteItem('event_videos', id)}
+            />
+          )}
+          {activeSection === 'downloads' && (
+            <DownloadsSection
+              items={downloads}
+              onSave={(item) => saveItem('downloads', item as unknown as Record<string, unknown>)}
+              onDelete={(id) => deleteItem('downloads', id)}
             />
           )}
           {activeSection === 'house_management' && <HouseManagement />}
@@ -1845,6 +1856,261 @@ function VideoUploadField({
             placeholder="Or paste video URL..."
             value={value}
             onChange={e => onChange(e.target.value)}
+            className="h-8 text-xs"
+          />
+          {error && <p className="text-xs text-destructive">{error}</p>}
+          {value && !uploading && fileName && (
+            <p className="text-xs text-emerald-400 truncate" title={fileName}>{fileName}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ===== Downloads Section =====
+function emptyDownload(): Omit<Download, 'id'> {
+  return { title: '', description: '', file_url: '', file_type: 'document', file_name: '', file_size: 0, order_index: 0, is_active: true };
+}
+
+function fileTypeIcon(type: string) {
+  switch (type) {
+    case 'audio': return <FileAudio className="w-10 h-10" />;
+    case 'video': return <FileVideo className="w-10 h-10" />;
+    case 'image': return <FileImage className="w-10 h-10" />;
+    default: return <FileText className="w-10 h-10" />;
+  }
+}
+
+function DownloadsSection({
+  items,
+  onSave,
+  onDelete,
+}: {
+  items: Download[];
+  onSave: (item: Download | Omit<Download, 'id'>) => void;
+  onDelete: (id: string) => void;
+}) {
+  const [editing, setEditing] = useState<(Download | Omit<Download, 'id'>) | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-foreground">Downloads</h2>
+          <p className="text-muted-foreground text-sm mt-1">Manage downloadable files (audio, video, images, documents)</p>
+        </div>
+        <Button onClick={() => setEditing(emptyDownload())} className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold gap-2">
+          <Plus className="w-4 h-4" /> Add Download
+        </Button>
+      </div>
+
+      {editing && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card border border-emerald-500/30 rounded-2xl p-6 shadow-lg"
+        >
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-bold text-foreground">{'id' in editing ? 'Edit Download' : 'Add New Download'}</h3>
+            <button onClick={() => setEditing(null)} className="text-muted-foreground hover:text-foreground">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Title</Label>
+              <Input
+                value={(editing as Download).title}
+                onChange={e => setEditing({ ...editing, title: e.target.value })}
+                placeholder="e.g. Annual Report 2026"
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Description (optional)</Label>
+              <textarea
+                value={(editing as Download).description || ''}
+                onChange={e => setEditing({ ...editing, description: e.target.value })}
+                placeholder="Brief description of this file..."
+                rows={2}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">File Type</Label>
+              <select
+                value={(editing as Download).file_type}
+                onChange={e => setEditing({ ...editing, file_type: e.target.value as Download['file_type'] })}
+                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <option value="audio">Audio</option>
+                <option value="video">Video</option>
+                <option value="image">Image</option>
+                <option value="document">Document</option>
+              </select>
+            </div>
+            <FileUploadField
+              label="File"
+              value={(editing as Download).file_url}
+              fileType={(editing as Download).file_type}
+              onChange={(url, fileName, fileSize) => setEditing({ ...editing, file_url: url, file_name: fileName, file_size: fileSize })}
+            />
+            <div className="flex justify-end">
+              <ToggleField label="Active" value={(editing as Download).is_active} onChange={v => setEditing({ ...editing, is_active: v })} />
+            </div>
+          </div>
+          <div className="flex gap-3 mt-6 justify-end">
+            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button
+              onClick={() => { onSave(editing); setEditing(null); }}
+              disabled={!(editing as Download).title || !(editing as Download).file_url}
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold gap-2 disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" /> Save
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
+      <div className="space-y-2">
+        {items.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground border border-dashed border-border rounded-xl">
+            No downloads yet. Click &quot;Add Download&quot; to upload a file.
+          </div>
+        )}
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="bg-card border border-border rounded-xl p-4 transition-all hover:border-emerald-500/40"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+                {item.file_type === 'image' && item.file_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.file_url} alt={item.title} className="w-full h-full object-cover rounded-lg" />
+                ) : (
+                  fileTypeIcon(item.file_type)
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${item.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-muted text-muted-foreground border border-border'}`}>
+                    {item.file_type}
+                  </span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${item.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-muted text-muted-foreground border border-border'}`}>
+                    {item.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <p className="font-semibold text-foreground text-sm">{item.title}</p>
+                {item.description && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{item.description}</p>}
+                {item.file_name && <p className="text-muted-foreground/70 text-xs mt-1 truncate">{item.file_name}</p>}
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <Button size="sm" variant="outline" onClick={() => setEditing(item)} className="h-8 text-xs">Edit</Button>
+                <Button size="sm" variant="ghost" onClick={() => setConfirmingId(item.id)} className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <AnimatePresence>
+        {confirmingId && (
+          <ConfirmDialog
+            onConfirm={() => { onDelete(confirmingId); setConfirmingId(null); }}
+            onCancel={() => setConfirmingId(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function FileUploadField({
+  label,
+  value,
+  fileType,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  fileType: string;
+  onChange: (url: string, fileName: string, fileSize: number) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const acceptMap: Record<string, string> = {
+    audio: 'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a',
+    video: 'video/mp4,video/webm,video/quicktime,video/x-msvideo',
+    image: 'image/jpeg,image/png,image/webp,image/gif',
+    document: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar',
+  };
+
+  async function handleFile(file: File) {
+    setUploading(true);
+    setError('');
+    const ext = file.name.split('.').pop();
+    const folder = fileType === 'document' ? 'documents' : fileType + 's';
+    const filename = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from('media').upload(filename, file, { upsert: false });
+    if (uploadError) {
+      setError('Upload failed: ' + uploadError.message);
+      setUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from('media').getPublicUrl(filename);
+    onChange(data.publicUrl, file.name, file.size);
+    setUploading(false);
+  }
+
+  const fileName = value ? value.split('/').pop()?.split('?')[0] : '';
+
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-xs font-medium text-muted-foreground">{label}</Label>
+      <div className="flex gap-3 items-start">
+        <div className="w-20 h-20 rounded-lg border border-border bg-muted flex items-center justify-center overflow-hidden shrink-0">
+          {value && fileType === 'image' ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={value} alt="preview" className="w-full h-full object-cover" />
+          ) : value && fileType === 'video' ? (
+            <video src={value} className="w-full h-full object-cover" muted />
+          ) : value ? (
+            fileTypeIcon(fileType)
+          ) : (
+            <Upload className="w-6 h-6 text-muted-foreground" />
+          )}
+        </div>
+        <div className="flex-1 space-y-2">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-border hover:border-emerald-500/50 bg-muted/50 hover:bg-emerald-500/5 text-sm text-muted-foreground hover:text-foreground transition-all disabled:opacity-50 w-full justify-center"
+          >
+            {uploading ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+            ) : (
+              <><Upload className="w-4 h-4" /> Click to upload {fileType}</>
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={acceptMap[fileType] || '*'}
+            className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
+          />
+          <Input
+            type="text"
+            placeholder="Or paste file URL..."
+            value={value}
+            onChange={e => onChange(e.target.value, '', 0)}
             className="h-8 text-xs"
           />
           {error && <p className="text-xs text-destructive">{error}</p>}

@@ -99,6 +99,20 @@ export type EventVideo = {
   created_at?: string;
 };
 
+export type Download = {
+  id: string;
+  title: string;
+  description?: string;
+  file_url: string;
+  file_type: 'audio' | 'video' | 'image' | 'document';
+  file_name?: string;
+  file_size?: number;
+  order_index: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type LeadershipTeamMember = {
   id: string;
   name: string;
