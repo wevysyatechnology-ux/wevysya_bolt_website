@@ -112,7 +112,7 @@ export default function MembershipPage() {
                   </div>
                   <Button
                     className="mt-8 w-full bg-white text-black hover:bg-emerald-50 font-semibold text-base py-6 rounded-xl transition-all duration-200"
-                    onClick={() => { window.location.href = 'https://www.wevysya.org/membership'; }}
+                    onClick={() => { window.location.href = 'https://rzp.io/rzp/wevysya'; }}
                   >
                     Choose Regular Membership
                   </Button>
