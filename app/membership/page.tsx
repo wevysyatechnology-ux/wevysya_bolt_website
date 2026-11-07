@@ -102,11 +102,7 @@ export default function MembershipPage() {
                     <span className="inline-block text-xs font-semibold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full mb-4">
                       Regular Membership
                     </span>
-                    <div className="flex items-baseline gap-2 mb-2">
-                      <span className="text-5xl font-bold text-white">&#8377;10,620</span>
-                    </div>
-                    <p className="text-emerald-300/70 text-sm mb-6">per year &mdash; Perfect for growing businesses</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
+                    <p className="text-gray-300 text-sm leading-relaxed mt-6">
                       Join India&apos;s most trusted Arya Vysya business network. Gain access to exclusive networking events, business links, and a community of 2,000+ entrepreneurs.
                     </p>
                   </div>
